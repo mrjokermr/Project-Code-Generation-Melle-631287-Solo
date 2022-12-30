@@ -21,7 +21,7 @@ public class LoginResponseDTO   {
   private String token = null;
 
   @JsonProperty("user")
-  private User user = null;
+  private UserResponseDTO user = null;
 
   public LoginResponseDTO token(String token) {
     this.token = token;
@@ -42,7 +42,7 @@ public class LoginResponseDTO   {
     this.token = token;
   }
 
-  public LoginResponseDTO user(User user) {
+  public LoginResponseDTO user(UserResponseDTO user) {
     this.user = user;
     return this;
   }
@@ -54,11 +54,11 @@ public class LoginResponseDTO   {
   @Schema(description = "")
   
     @Valid
-    public User getUser() {
+    public UserResponseDTO getUser() {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(UserResponseDTO user) {
     this.user = user;
   }
 

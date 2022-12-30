@@ -1,19 +1,17 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Transaction
@@ -21,14 +19,7 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
 
-@Entity
-@Table(name = "transactions")
-public class Transaction   {
-
-  @Id
-  @GeneratedValue
-  @JsonProperty("id")
-  private Integer id;
+public class TransactionResponseDTO {
   @JsonProperty("ibanFrom")
   private String ibanFrom = null;
 
@@ -76,7 +67,7 @@ public class Transaction   {
   @JsonProperty("transactionType")
   private TransactionTypeEnum transactionType = null;
 
-  public Transaction ibanFrom(String ibanFrom) {
+  public TransactionResponseDTO ibanFrom(String ibanFrom) {
     this.ibanFrom = ibanFrom;
     return this;
   }
@@ -96,7 +87,7 @@ public class Transaction   {
     this.ibanFrom = ibanFrom;
   }
 
-  public Transaction ibanTo(String ibanTo) {
+  public TransactionResponseDTO ibanTo(String ibanTo) {
     this.ibanTo = ibanTo;
     return this;
   }
@@ -116,7 +107,7 @@ public class Transaction   {
     this.ibanTo = ibanTo;
   }
 
-  public Transaction amount(Double amount) {
+  public TransactionResponseDTO amount(Double amount) {
     this.amount = amount;
     return this;
   }
@@ -137,7 +128,7 @@ public class Transaction   {
     this.amount = amount;
   }
 
-  public Transaction userPerforming(Integer userPerforming) {
+  public TransactionResponseDTO userPerforming(Integer userPerforming) {
     this.userPerforming = userPerforming;
     return this;
   }
@@ -157,7 +148,7 @@ public class Transaction   {
     this.userPerforming = userPerforming;
   }
 
-  public Transaction transactionType(TransactionTypeEnum transactionType) {
+  public TransactionResponseDTO transactionType(TransactionTypeEnum transactionType) {
     this.transactionType = transactionType;
     return this;
   }
@@ -179,14 +170,14 @@ public class Transaction   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Transaction transaction = (Transaction) o;
+    TransactionResponseDTO transaction = (TransactionResponseDTO) o;
     return Objects.equals(this.ibanFrom, transaction.ibanFrom) &&
         Objects.equals(this.ibanTo, transaction.ibanTo) &&
         Objects.equals(this.amount, transaction.amount) &&
@@ -217,7 +208,7 @@ public class Transaction   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

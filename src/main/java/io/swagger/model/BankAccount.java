@@ -8,6 +8,11 @@ import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import org.springframework.validation.annotation.Validated;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -16,10 +21,12 @@ import javax.validation.constraints.*;
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
-
-
+@Entity
+@Table(name = "bankAccounts")
 public class BankAccount   {
   @JsonProperty("id")
+  @Id
+  @GeneratedValue
   private Integer id = null;
 
   @JsonProperty("IBAN")

@@ -28,6 +28,20 @@ public class NewUserRequestDTO   {
   @JsonProperty("password")
   private String password = null;
 
+  @JsonProperty("dayLimit")
+  private Integer dayLimit = null;
+
+  @JsonProperty("transactionLimit")
+  private Double transactionLimit = null;
+
+  public void setDayLimit(Integer dayLimit) {
+    this.dayLimit = dayLimit;
+  }
+
+  public void setTransactionLimit(Double transactionLimit) {
+    this.transactionLimit = transactionLimit;
+  }
+
   public NewUserRequestDTO firstName(String firstName) {
     this.firstName = firstName;
     return this;

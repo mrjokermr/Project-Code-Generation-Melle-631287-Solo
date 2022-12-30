@@ -2,6 +2,7 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -11,12 +12,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 /**
  * Gets or Sets UserAccountType
  */
-public enum UserAccountType {
-  EMPLOYEE("Employee"),
-    CUSTOMER("Customer"),
-    BANKADMIN("BankAdmin");
+public enum UserAccountType implements GrantedAuthority {
+    ROLE_EMPLOYEE("Employee"),
+    ROLE_CUSTOMER("Customer"),
+    ROLE_BANKADMIN("BankAdmin");
 
   private String value;
+
+  @Override
+  public String getAuthority() {
+    return name();
+  }
 
   UserAccountType(String value) {
     this.value = value;

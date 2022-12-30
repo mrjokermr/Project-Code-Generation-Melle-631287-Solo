@@ -5,6 +5,7 @@ import io.swagger.model.DepositOrWithdrawRequestDTO;
 import java.util.Date;
 import io.swagger.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.TransactionResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -51,74 +52,30 @@ public class TransactionApiController implements TransactionApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<Transaction>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n}, {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<List<TransactionResponseDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Transaction>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN,@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate,@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n}, {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN,@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate,@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan,@Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals) {
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Transaction>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") String userId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n}, {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") String userId) {
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Transaction>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody Transaction body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n}, {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<List<TransactionResponseDTO>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionResponseDTO body) {
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Transaction>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n}, {\n  \"transactionType\" : \"regular\",\n  \"amount\" : 104.99,\n  \"ibanFrom\" : \"NLHDINHO0235930399\",\n  \"userPerforming\" : 3,\n  \"ibanTo\" : \"NLKPINHO0039923593\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<List<TransactionResponseDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }
