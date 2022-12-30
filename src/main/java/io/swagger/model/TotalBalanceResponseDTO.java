@@ -4,7 +4,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
+
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -18,9 +18,9 @@ import javax.validation.constraints.*;
 
 public class TotalBalanceResponseDTO   {
   @JsonProperty("amount")
-  private BigDecimal amount = null;
+  private Double amount = null;
 
-  public TotalBalanceResponseDTO amount(BigDecimal amount) {
+  public TotalBalanceResponseDTO amount(Double amount) {
     this.amount = amount;
     return this;
   }
@@ -33,11 +33,11 @@ public class TotalBalanceResponseDTO   {
       @NotNull
 
     @Valid
-    public BigDecimal getAmount() {
+    public Double getAmount() {
     return amount;
   }
 
-  public void setAmount(BigDecimal amount) {
+  public void setAmount(Double amount) {
     this.amount = amount;
   }
 

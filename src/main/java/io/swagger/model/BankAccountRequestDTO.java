@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.BankAccountStatus;
 import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
+
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -29,7 +29,7 @@ public class BankAccountRequestDTO   {
   private BankAccountStatus accountType = null;
 
   @JsonProperty("absoluteLimit")
-  private BigDecimal absoluteLimit = null;
+  private Double absoluteLimit = null;
 
   public BankAccountRequestDTO IBAN(String IBAN) {
     this.IBAN = IBAN;
@@ -93,7 +93,7 @@ public class BankAccountRequestDTO   {
     this.accountType = accountType;
   }
 
-  public BankAccountRequestDTO absoluteLimit(BigDecimal absoluteLimit) {
+  public BankAccountRequestDTO absoluteLimit(Double absoluteLimit) {
     this.absoluteLimit = absoluteLimit;
     return this;
   }
@@ -106,11 +106,11 @@ public class BankAccountRequestDTO   {
       @NotNull
 
     @Valid
-    public BigDecimal getAbsoluteLimit() {
+    public Double getAbsoluteLimit() {
     return absoluteLimit;
   }
 
-  public void setAbsoluteLimit(BigDecimal absoluteLimit) {
+  public void setAbsoluteLimit(Double absoluteLimit) {
     this.absoluteLimit = absoluteLimit;
   }
 

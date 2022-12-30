@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.UserAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -37,7 +36,7 @@ public class NewUserEmployeeRequestDTO   {
   private Integer dayLimit = null;
 
   @JsonProperty("transactionLimit")
-  private BigDecimal transactionLimit = null;
+  private Double transactionLimit = null;
 
   public NewUserEmployeeRequestDTO firstName(String firstName) {
     this.firstName = firstName;
@@ -159,7 +158,7 @@ public class NewUserEmployeeRequestDTO   {
     this.dayLimit = dayLimit;
   }
 
-  public NewUserEmployeeRequestDTO transactionLimit(BigDecimal transactionLimit) {
+  public NewUserEmployeeRequestDTO transactionLimit(Double transactionLimit) {
     this.transactionLimit = transactionLimit;
     return this;
   }
@@ -171,11 +170,11 @@ public class NewUserEmployeeRequestDTO   {
   @Schema(example = "1000", description = "")
   
     @Valid
-    public BigDecimal getTransactionLimit() {
+    public Double getTransactionLimit() {
     return transactionLimit;
   }
 
-  public void setTransactionLimit(BigDecimal transactionLimit) {
+  public void setTransactionLimit(Double transactionLimit) {
     this.transactionLimit = transactionLimit;
   }
 

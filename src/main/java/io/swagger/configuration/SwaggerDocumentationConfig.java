@@ -13,6 +13,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
 @Configuration
 public class SwaggerDocumentationConfig {
@@ -23,8 +26,8 @@ public class SwaggerDocumentationConfig {
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("io.swagger.api"))
                     .build()
-                .directModelSubstitute(org.threeten.bp.LocalDate.class, java.sql.Date.class)
-                .directModelSubstitute(org.threeten.bp.OffsetDateTime.class, java.util.Date.class)
+                .directModelSubstitute(LocalDate.class, java.sql.Date.class)
+                .directModelSubstitute(Date.class, java.util.Date.class)
                 .apiInfo(apiInfo());
     }
 

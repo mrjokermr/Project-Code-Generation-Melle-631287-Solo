@@ -33,6 +33,7 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -81,17 +82,22 @@ public class UserApiController implements UserApi {
     }
 
     public ResponseEntity<List<User>> postRegisterUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserRequestDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<User>>(objectMapper.readValue("[ {\n  \"firstName\" : \"jantje\",\n  \"lastName\" : \"schuurman\",\n  \"password\" : \"adbj23!9edus\",\n  \"dayLimit\" : 18,\n  \"id\" : 1,\n  \"userType\" : \"Employee\",\n  \"transactionLimit\" : 1000,\n  \"creationDate\" : \"2016-08-29T09:12:33.001Z\",\n  \"username\" : \"jantje93283\"\n}, {\n  \"firstName\" : \"jantje\",\n  \"lastName\" : \"schuurman\",\n  \"password\" : \"adbj23!9edus\",\n  \"dayLimit\" : 18,\n  \"id\" : 1,\n  \"userType\" : \"Employee\",\n  \"transactionLimit\" : 1000,\n  \"creationDate\" : \"2016-08-29T09:12:33.001Z\",\n  \"username\" : \"jantje93283\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<User>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        User u = new User();
+        u.setId(12);
+        u.transactionLimit(30.0);
 
-        return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.status(HttpStatus.OK).body(List.of(u));
+        //        String accept = request.getHeader("Accept");
+//        if (accept != null && accept.contains("application/json")) {
+//            try {
+//                return new ResponseEntity<List<User>>(objectMapper.readValue("[ {\n  \"firstName\" : \"jantje\",\n  \"lastName\" : \"schuurman\",\n  \"password\" : \"adbj23!9edus\",\n  \"dayLimit\" : 18,\n  \"id\" : 1,\n  \"userType\" : \"Employee\",\n  \"transactionLimit\" : 1000,\n  \"creationDate\" : \"2016-08-29T09:12:33.001Z\",\n  \"username\" : \"jantje93283\"\n}, {\n  \"firstName\" : \"jantje\",\n  \"lastName\" : \"schuurman\",\n  \"password\" : \"adbj23!9edus\",\n  \"dayLimit\" : 18,\n  \"id\" : 1,\n  \"userType\" : \"Employee\",\n  \"transactionLimit\" : 1000,\n  \"creationDate\" : \"2016-08-29T09:12:33.001Z\",\n  \"username\" : \"jantje93283\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+//            } catch (IOException e) {
+//                log.error("Couldn't serialize response for content type application/json", e);
+//                return new ResponseEntity<List<User>>(HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//        }
+//
+//        return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<List<User>> postUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserEmployeeRequestDTO body) {

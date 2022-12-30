@@ -1,12 +1,11 @@
 package io.swagger.model;
 
+import java.util.Date;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.UserAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
-import org.threeten.bp.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -21,30 +20,22 @@ import javax.validation.constraints.*;
 public class User   {
   @JsonProperty("id")
   private Integer id = null;
-
   @JsonProperty("firstName")
   private String firstName = null;
-
   @JsonProperty("lastName")
   private String lastName = null;
-
   @JsonProperty("username")
   private String username = null;
-
   @JsonProperty("password")
   private String password = null;
-
   @JsonProperty("userType")
   private UserAccountType userType = null;
-
   @JsonProperty("dayLimit")
   private Integer dayLimit = null;
-
   @JsonProperty("transactionLimit")
-  private BigDecimal transactionLimit = null;
-
+  private Double transactionLimit = null;
   @JsonProperty("creationDate")
-  private OffsetDateTime creationDate = null;
+  private Date creationDate = null;
 
   public User id(Integer id) {
     this.id = id;
@@ -187,7 +178,7 @@ public class User   {
     this.dayLimit = dayLimit;
   }
 
-  public User transactionLimit(BigDecimal transactionLimit) {
+  public User transactionLimit(Double transactionLimit) {
     this.transactionLimit = transactionLimit;
     return this;
   }
@@ -200,15 +191,15 @@ public class User   {
       @NotNull
 
     @Valid
-    public BigDecimal getTransactionLimit() {
+    public Double getTransactionLimit() {
     return transactionLimit;
   }
 
-  public void setTransactionLimit(BigDecimal transactionLimit) {
+  public void setTransactionLimit(Double transactionLimit) {
     this.transactionLimit = transactionLimit;
   }
 
-  public User creationDate(OffsetDateTime creationDate) {
+  public User creationDate(Date creationDate) {
     this.creationDate = creationDate;
     return this;
   }
@@ -221,11 +212,11 @@ public class User   {
       @NotNull
 
     @Valid
-    public OffsetDateTime getCreationDate() {
+    public Date getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(OffsetDateTime creationDate) {
+  public void setCreationDate(Date creationDate) {
     this.creationDate = creationDate;
   }
 

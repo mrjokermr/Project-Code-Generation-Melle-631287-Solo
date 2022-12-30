@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.model.BankAccountStatus;
 import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
-import org.threeten.bp.OffsetDateTime;
+import java.util.Date;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -30,7 +29,7 @@ public class BankAccount   {
   private Integer ownerId = null;
 
   @JsonProperty("balance")
-  private BigDecimal balance = null;
+  private Double balance = null;
 
   @JsonProperty("accountStatus")
   private BankAccountType accountStatus = null;
@@ -39,10 +38,10 @@ public class BankAccount   {
   private BankAccountStatus accountType = null;
 
   @JsonProperty("absoluteLimit")
-  private BigDecimal absoluteLimit = null;
+  private Double absoluteLimit = null;
 
   @JsonProperty("creationDate")
-  private OffsetDateTime creationDate = null;
+  private Date creationDate = null;
 
   public BankAccount id(Integer id) {
     this.id = id;
@@ -104,7 +103,7 @@ public class BankAccount   {
     this.ownerId = ownerId;
   }
 
-  public BankAccount balance(BigDecimal balance) {
+  public BankAccount balance(Double balance) {
     this.balance = balance;
     return this;
   }
@@ -117,11 +116,11 @@ public class BankAccount   {
       @NotNull
 
     @Valid
-    public BigDecimal getBalance() {
+    public Double getBalance() {
     return balance;
   }
 
-  public void setBalance(BigDecimal balance) {
+  public void setBalance(Double balance) {
     this.balance = balance;
   }
 
@@ -165,7 +164,7 @@ public class BankAccount   {
     this.accountType = accountType;
   }
 
-  public BankAccount absoluteLimit(BigDecimal absoluteLimit) {
+  public BankAccount absoluteLimit(Double absoluteLimit) {
     this.absoluteLimit = absoluteLimit;
     return this;
   }
@@ -178,15 +177,15 @@ public class BankAccount   {
       @NotNull
 
     @Valid
-    public BigDecimal getAbsoluteLimit() {
+    public Double getAbsoluteLimit() {
     return absoluteLimit;
   }
 
-  public void setAbsoluteLimit(BigDecimal absoluteLimit) {
+  public void setAbsoluteLimit(Double absoluteLimit) {
     this.absoluteLimit = absoluteLimit;
   }
 
-  public BankAccount creationDate(OffsetDateTime creationDate) {
+  public BankAccount creationDate(Date creationDate) {
     this.creationDate = creationDate;
     return this;
   }
@@ -199,11 +198,11 @@ public class BankAccount   {
       @NotNull
 
     @Valid
-    public OffsetDateTime getCreationDate() {
+    public Date getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(OffsetDateTime creationDate) {
+  public void setCreationDate(Date creationDate) {
     this.creationDate = creationDate;
   }
 
