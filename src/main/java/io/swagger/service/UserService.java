@@ -67,33 +67,54 @@ public class UserService implements UserDetailsService {
             return null;
         }
     }
-    public Boolean CustomerIsExecutingApiCallThatIsNotTargetedForHimself(Integer targetId, String targetIban) {
+
+    public Integer GetCurrentAuthorizedUserId() {
+        return GetCurrentUserByAuthorization().getId();
+    }
+    public Boolean CustomerIsExecutingApiCallThatIsNotTargetedForHimself(Integer targetId) {
+        if(targetId < 0) return true;
+
         User userMakingTheCall = GetCurrentUserByAuthorization();
 
         if(userMakingTheCall == null) return true;
-        //this line below is for making sure that the current user is not an employee or admin
+        //this line below is for making sure that the current user is not an employee or admin because they can allways execute a action for another user
         else if(userMakingTheCall.getUserType().equals(UserAccountType.ROLE_EMPLOYEE) || userMakingTheCall.getUserType().equals(UserAccountType.ROLE_BANKADMIN)) return false;
-        else if(targetId != null && targetId != userMakingTheCall.getId()) {
-            return true;
+        else if(targetId != null && targetId.equals(userMakingTheCall.getId())) {
+            return false;
         }
+        else return true;
+    }
+
+    public Boolean CustomerIsExecutingApiCallThatIsNotTargetedForHimself(String targetIban) {
+        User userMakingTheCall = GetCurrentUserByAuthorization();
+
+        if(userMakingTheCall == null) return true;
+            //this line below is for making sure that the current user is not an employee or admin because they can allways execute a action for another user
+        else if(userMakingTheCall.getUserType().equals(UserAccountType.ROLE_EMPLOYEE) || userMakingTheCall.getUserType().equals(UserAccountType.ROLE_BANKADMIN)) return false;
         else if(targetIban != null) {
             //get ibans for the user
-            List<BankAccount> bankAccountsOwnedByCustomer = bankAccountService.GetAllBankAccountsForUser(targetId);
+            List<BankAccount> bankAccountsOwnedByCustomer = bankAccountService.GetAllBankAccountsForUser(userMakingTheCall.getId());
 
-            for(int i = 0; i < bankAccountsOwnedByCustomer.size(); i++) {
-                if(bankAccountsOwnedByCustomer.get(i).getIban().equals(targetIban)) return false;
+            for(BankAccount ba : bankAccountsOwnedByCustomer) {
+                //the ibans match so the user performing is performing an action with his own Iban
+                if(ba.getIban().equals(targetIban)) return false;
+
             }
 
             return true; //the targeted IBAN doesn't match the customers IBAN(s)
         }
-        else return false;
+        else return true;
     }
 
     public User GetCurrentUserByAuthorization() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
 
-        return userRepository.findByUsername(currentUserName);
+            return userRepository.findByUsername(currentUserName);
+        }
+        catch(Exception e) { return null; }
+
     }
 
     public List<User> GetMatchingUsersByFirstAndLastName(String firstName, String lastName) {
@@ -181,22 +202,6 @@ public class UserService implements UserDetailsService {
         catch(Exception e) { return null; }
 
     }
-//    public User TestNewUserAdd() {
-//        User u = new User();
-//        u.setUsername("CarolinaVeldman2022");
-//        u.transactionLimit(30.0);
-//        u.setCreationDate(new Date());
-//        u.setDayLimit(10);
-//        u.setFirstName("Carolina");
-//        u.setLastName("Veldman");
-//        u.setUserType(UserAccountType.ROLE_EMPLOYEE);
-//        u.setPassword(passwordEncoder.encode("geheim"));
-//
-//        userRepository.save(u);
-//
-//        return u;
-//    }
-
     public List<User> GetAllUsers(Boolean onlyUsersWithoutABankAccount) {
         List<User> allUsers = userRepository.findAll();
         allUsers.removeIf(u -> u.getUserType().equals(UserAccountType.ROLE_BANKADMIN)); //remove the bank account owner user from the list

@@ -7,7 +7,8 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.Transaction;
-import io.swagger.model.TransactionResponseAndRequestDTO;
+import io.swagger.model.TransactionRequestDTO;
+import io.swagger.model.TransactionResponseDTO;
 import io.swagger.service.TransactionService;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,40 +50,130 @@ public class TransactionApiController implements TransactionApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<TransactionResponseAndRequestDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
+    public ResponseEntity<List<TransactionResponseDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
 
-        return new ResponseEntity<List<TransactionResponseAndRequestDTO>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<List<TransactionResponseAndRequestDTO>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals) {
-
-        return new ResponseEntity<List<TransactionResponseAndRequestDTO>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<List<TransactionResponseAndRequestDTO>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") String userId) {
-
-
-        return new ResponseEntity<List<TransactionResponseAndRequestDTO>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
-    public ResponseEntity<List<Transaction>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionResponseAndRequestDTO body) {
-        //if user is CUSTOMER the ibanFROM has to be his own
-        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(null,body.getIbanFrom())) {
+
+    public ResponseEntity<List<TransactionResponseDTO>> getTransaction(@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals) {
+        //get transactions by logged in user
+        Integer userId = userService.GetCurrentAuthorizedUserId();
+        List<Transaction> allUserTransactions = null;
+
+        if(userId == null || userId < 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        else {
+            //set the allUserTransactions based on the optional parameters
+            //optional parameters are: combination [fromDate, toDate] , [(amountBiggerThan || or && amountSmallerThan) || amountEquals]
+            if(fromDate != null || toDate != null) {
+                //one of the filters is set
+                allUserTransactions = transactionService.GetTransactionsById(userId,fromDate, toDate);
+            }
+            else if(amountBiggerThan != null || amountSmallerThan != null || amountEquals != null) {
+                //one of these filters is set
+                if(amountEquals == null) allUserTransactions = transactionService.GetTransactionsById(userId,amountBiggerThan,amountSmallerThan);
+                else allUserTransactions = transactionService.GetTransactionsById(userId,amountEquals);
+            }
+            else {
+                //no filter is set so return all unfiltered transactions
+                allUserTransactions = transactionService.GetTransactionsById(userId);
+            }
+
+            //return the info
+            if(allUserTransactions == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            else if(allUserTransactions.size() == 0) return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+            else {
+                return ResponseEntity.status(HttpStatus.OK).body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+            }
+        }
+
+    }
+
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals, @Parameter(in = ParameterIn.QUERY, description = "Provide a Iban to get transactions related to that iban" ,schema=@Schema()) @Valid @RequestParam(value = "historyWithIban", required = false) String historyWithIban) {
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(IBAN)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {
-            Transaction result = transactionService.CreateANewTransaction(body);
+            List<Transaction> allUserTransactions = null;
 
-            if(result == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            if(IBAN == null || IBAN == "") return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            else {
+                //set the allUserTransactions based on the optional parameters
+                //optional parameters are: combination [fromDate, toDate] , [(amountBiggerThan || or && amountSmallerThan) || amountEquals]
+                if(fromDate != null || toDate != null) {
+                    //one of the filters is set
+                    allUserTransactions = transactionService.GetTransactionsByIban(IBAN,fromDate, toDate);
+                }
+                else if(amountBiggerThan != null || amountSmallerThan != null || amountEquals != null) {
+                    //one of these filters is set
+                    if(amountEquals == null) allUserTransactions = transactionService.GetTransactionsByIban(IBAN,amountBiggerThan,amountSmallerThan);
+                    else allUserTransactions = transactionService.GetTransactionsByIban(IBAN,amountEquals);
+                }
+                else {
+                    //no filter is set so return all unfiltered transactions
+                    allUserTransactions = transactionService.GetTransactionsByIban(IBAN);
+                }
+
+                //filter historyWithIban option, only keep transactions in the list that contain the historyWithIban at the fromIban or toIban
+                if(historyWithIban != null) {
+                    allUserTransactions = transactionService.FilterListTransactionsRelatedToIbanOnly(allUserTransactions, historyWithIban);
+                }
+
+
+                //return the info
+                if(allUserTransactions == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                else if(allUserTransactions.size() == 0) return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+                else {
+                    return ResponseEntity.status(HttpStatus.OK).body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+                }
+            }
+
+        }
+    }
+
+
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId) {
+        //check if user is employee it can execute this command for any userID , if a CUSTOMER performs this code it has to be called for this own userID
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else {
+            //get transactions by logged in user
+            if (userId == null || userId < 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+            List<Transaction> allUserTransactions = transactionService.GetTransactionsById(userId);
+            //return the info
+            if (allUserTransactions.size() == 0) return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+            else {
+                return ResponseEntity.status(HttpStatus.OK).body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
+            }
+        }
+    }
+
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionRequestDTO body) {
+        //if user is CUSTOMER the ibanFROM has to be his own
+        //changed the methods return type to repsonse entity to give some feedback
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(body.getIbanFrom())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else {
+            Transaction result = transactionService.CreateANewTransaction(TransactionMapper.TransactionRequestToTransactionResponseDTO(body,userService.GetCurrentAuthorizedUserId()));
+
+            if(result == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(transactionService.GetReasonWhyTransactionFailed());
             else return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
         }
 
     }
 
-    public ResponseEntity<List<TransactionResponseAndRequestDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
+    public ResponseEntity<List<TransactionResponseDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
 
-        return new ResponseEntity<List<TransactionResponseAndRequestDTO>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

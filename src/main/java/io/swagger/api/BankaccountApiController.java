@@ -54,27 +54,17 @@ public class BankaccountApiController implements BankaccountApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
-    public ResponseEntity<List<BankAccount>> bankaccountInitBankAccountsUserIdPost(@Parameter(in = ParameterIn.PATH, description = "user id for the targeted user", required=true, schema=@Schema()) @PathVariable("userId") String userId) {
-        Integer parsedUserId = -1;
-
-        try {
-            parsedUserId = Integer.valueOf(userId);
-            //if the user role is customer and is trying to execute this API call for another user disallow it
-            if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(parsedUserId,null)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-
-            if(parsedUserId < 0) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-
+    public ResponseEntity<List<BankAccount>> bankaccountInitBankAccountsUserIdPost(@Parameter(in = ParameterIn.PATH, description = "user id for the targeted user", required=true, schema=@Schema()) @PathVariable("userId") Integer userId) {
+        //if the user role is customer and is trying to execute this API call for another user disallow it
+        if (userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        else {
+            List<BankAccount> resultList = bankAccountService.CreateCurrentAndSavingsAccountForUserId(userId);
+
+            if (resultList.size() < 2) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            else return ResponseEntity.status(HttpStatus.OK).body(resultList);
         }
-
-        List<BankAccount> resultList = bankAccountService.CreateCurrentAndSavingsAccountForUserId(parsedUserId);
-
-        if(resultList.size() < 2) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        else return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -86,7 +76,7 @@ public class BankaccountApiController implements BankaccountApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<BankAccount>> getBankAccountByIBAN(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN) {
-        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(null,IBAN)) {
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(IBAN)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {
@@ -117,7 +107,7 @@ public class BankaccountApiController implements BankaccountApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<TotalBalanceResponseDTO>> getTotalBalanceForAccounts(@Parameter(in = ParameterIn.PATH, description = "user id from which the total balance has to be loaded for", required=true, schema=@Schema()) @PathVariable("userId") Integer userId) {
-        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId,null)) {
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {
@@ -138,7 +128,7 @@ public class BankaccountApiController implements BankaccountApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<BankAccount>> putBankAccount(@Parameter(in = ParameterIn.DEFAULT, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @Valid @RequestBody BankAccountRequestDTO body) {
-        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(null,body.getIban())) {
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(body.getIban())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {

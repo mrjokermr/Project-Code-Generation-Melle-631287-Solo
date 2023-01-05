@@ -8,6 +8,7 @@ import io.swagger.model.*;
 import io.swagger.repository.BankAccountRepository;
 import io.swagger.repository.UserRepository;
 import io.swagger.service.BankAccountService;
+import io.swagger.service.TransactionService;
 import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -44,6 +45,9 @@ public class Swagger2SpringBoot implements CommandLineRunner {
     UserService userService;
 
     @Autowired
+    TransactionService transactionService;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
     @Override
     public void run(String... arg0) throws Exception {
@@ -66,7 +70,7 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         employee.setUsername("CarolinaVeldman2022");
         employee.setTransactionLimit(4000.0);
         employee.setCreationDate(new Date());
-        employee.setDayLimit(1);
+        employee.setDayLimit(100);
         employee.setFirstName("Carolina");
         employee.setLastName("Veldman");
         employee.setUserType(UserAccountType.ROLE_EMPLOYEE);
@@ -81,6 +85,12 @@ public class Swagger2SpringBoot implements CommandLineRunner {
                 ba.setBalance(5000.0);
                 bankAccountRepository.save(ba);
             }
+            if(ba.getAccountType().equals(BankAccountType.SAVINGS)) {
+                ba.setIban("ABCDEFG");
+                ba.setAbsoluteLimit(-500.0);
+                ba.setBalance(5000.0);
+                bankAccountRepository.save(ba);
+            }
         }
 
 
@@ -88,13 +98,24 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         customer.setUsername("FerdinantHogewaard2022");
         customer.setTransactionLimit(10000.0);
         customer.setCreationDate(new Date());
-        customer.setDayLimit(10);
+        customer.setDayLimit(100);
         customer.setFirstName("Ferdinant");
         customer.setLastName("Hogewaard");
         customer.setUserType(UserAccountType.ROLE_CUSTOMER);
         customer.setEncryptedPassword("geheim");
 
+        User customer2 = new User();
+        customer2.setUsername("MoniqueSanders2022");
+        customer2.setTransactionLimit(10000.0);
+        customer2.setCreationDate(new Date());
+        customer2.setDayLimit(100);
+        customer2.setFirstName("Monique");
+        customer2.setLastName("Sanders");
+        customer2.setUserType(UserAccountType.ROLE_CUSTOMER);
+        customer2.setEncryptedPassword("geheim");
+
         userRepository.save(customer);
+        userRepository.save(customer2);
 
         List<BankAccount> resultTwo = bankAccountService.CreateCurrentAndSavingsAccountForUserId(userRepository.findByUsername(customer.getUsername()).getId());
         for(BankAccount ba : resultTwo) {
@@ -104,9 +125,28 @@ public class Swagger2SpringBoot implements CommandLineRunner {
                 ba.setBalance(5000.0);
                 bankAccountRepository.save(ba);
             }
+            if(ba.getAccountType().equals(BankAccountType.SAVINGS)) {
+                ba.setIban("GFEDCBA");
+                ba.setAbsoluteLimit(-500.0);
+                ba.setBalance(5000.0);
+                bankAccountRepository.save(ba);
+            }
         }
 
+        //create some fake transactions
+        TransactionResponseDTO dummyTrans1 = new TransactionResponseDTO("DCBA","ABCD",100.0,
+                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+        TransactionResponseDTO dummyTrans2 = new TransactionResponseDTO("ABCD","DCBA",70.0,
+                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+        TransactionResponseDTO dummyTrans3 = new TransactionResponseDTO("ABCD","ABCDEFG",230.0,
+                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+        TransactionResponseDTO dummyTrans4 = new TransactionResponseDTO("GFEDCBA","DCBA",18.0,
+                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
 
+        transactionService.CreateANewTransaction(dummyTrans1);
+        transactionService.CreateANewTransaction(dummyTrans2);
+        transactionService.CreateANewTransaction(dummyTrans3);
+        transactionService.CreateANewTransaction(dummyTrans4);
 
 
         //one user with duplicate name for testing purpose of the posibility that users have the same fullname

@@ -38,11 +38,23 @@ public interface UserApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "401", description = "not allowed to load users") })
-    @RequestMapping(value = "/user",
+    @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<UserResponseDTO>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts);
 
+    @Operation(summary = "get all user info", description = "get your own user info", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "succesfully loaded user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+
+            @ApiResponse(responseCode = "400", description = "bad input parameter"),
+
+            @ApiResponse(responseCode = "401", description = "not allowed to load users") })
+    @RequestMapping(value = "/user",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<UserResponseDTO>> getUserInfo();
 
     @Operation(summary = "get user info by user id", description = "load all user info by user id", tags={ "user" })
     @ApiResponses(value = { 

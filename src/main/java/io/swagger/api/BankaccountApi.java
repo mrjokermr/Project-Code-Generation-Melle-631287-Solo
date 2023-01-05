@@ -51,7 +51,7 @@ public interface BankaccountApi {
     @RequestMapping(value = "/bankaccount/initBankAccounts/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<BankAccount>> bankaccountInitBankAccountsUserIdPost(@Parameter(in = ParameterIn.PATH, description = "user id for the targeted user", required=true, schema=@Schema()) @PathVariable("userId") String userId);
+    ResponseEntity<List<BankAccount>> bankaccountInitBankAccountsUserIdPost(@Parameter(in = ParameterIn.PATH, description = "user id for the targeted user", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
 
 
     @Operation(summary = "get all bank accounts info if allowed", description = "Get Bank account information if you have the right rights ", security = {

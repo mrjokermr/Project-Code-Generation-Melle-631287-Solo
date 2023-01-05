@@ -1,8 +1,6 @@
 package io.swagger.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,7 +15,7 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
 
-public class TransactionResponseAndRequestDTO {
+public class TransactionResponseDTO {
   @JsonProperty("ibanFrom")
   private String ibanFrom = null;
 
@@ -33,9 +31,31 @@ public class TransactionResponseAndRequestDTO {
   @JsonProperty("creationDate")
   private Date creationDate = null;
 
-  public TransactionResponseAndRequestDTO creationDate(Date creationDate) {
+  public TransactionResponseDTO(String ibanFrom, String ibanTo, Double amount, Integer userPerforming, Transaction.TransactionTypeEnum type) {
+      this.ibanFrom = ibanFrom;
+      this.ibanTo = ibanTo;
+      this.amount = amount;
+      this.userPerforming = userPerforming;
+      this.transactionType = type;
+
+      this.creationDate = new Date();
+  }
+
+  public TransactionResponseDTO() {
+
+  }
+
+  public TransactionResponseDTO creationDate(Date creationDate) {
     this.creationDate = creationDate;
     return this;
+  }
+
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
+
+  public Date getCreationDate() {
+    return this.creationDate;
   }
 
   /**
@@ -44,7 +64,7 @@ public class TransactionResponseAndRequestDTO {
   @JsonProperty("transactionType")
   private Transaction.TransactionTypeEnum transactionType = null;
 
-  public TransactionResponseAndRequestDTO ibanFrom(String ibanFrom) {
+  public TransactionResponseDTO ibanFrom(String ibanFrom) {
     this.ibanFrom = ibanFrom;
     return this;
   }
@@ -64,7 +84,7 @@ public class TransactionResponseAndRequestDTO {
     this.ibanFrom = ibanFrom;
   }
 
-  public TransactionResponseAndRequestDTO ibanTo(String ibanTo) {
+  public TransactionResponseDTO ibanTo(String ibanTo) {
     this.ibanTo = ibanTo;
     return this;
   }
@@ -84,7 +104,7 @@ public class TransactionResponseAndRequestDTO {
     this.ibanTo = ibanTo;
   }
 
-  public TransactionResponseAndRequestDTO amount(Double amount) {
+  public TransactionResponseDTO amount(Double amount) {
     this.amount = amount;
     return this;
   }
@@ -105,7 +125,7 @@ public class TransactionResponseAndRequestDTO {
     this.amount = amount;
   }
 
-  public TransactionResponseAndRequestDTO userPerforming(Integer userPerforming) {
+  public TransactionResponseDTO userPerforming(Integer userPerforming) {
     this.userPerforming = userPerforming;
     return this;
   }
@@ -125,7 +145,7 @@ public class TransactionResponseAndRequestDTO {
     this.userPerforming = userPerforming;
   }
 
-  public TransactionResponseAndRequestDTO transactionType(Transaction.TransactionTypeEnum transactionType) {
+  public TransactionResponseDTO transactionType(Transaction.TransactionTypeEnum transactionType) {
     this.transactionType = transactionType;
     return this;
   }
@@ -154,7 +174,7 @@ public class TransactionResponseAndRequestDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TransactionResponseAndRequestDTO transaction = (TransactionResponseAndRequestDTO) o;
+    TransactionResponseDTO transaction = (TransactionResponseDTO) o;
     return Objects.equals(this.ibanFrom, transaction.ibanFrom) &&
         Objects.equals(this.ibanTo, transaction.ibanTo) &&
         Objects.equals(this.amount, transaction.amount) &&

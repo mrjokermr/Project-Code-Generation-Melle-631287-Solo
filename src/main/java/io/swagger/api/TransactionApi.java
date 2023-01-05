@@ -9,7 +9,8 @@ package io.swagger.api;
 import io.swagger.model.DepositOrWithdrawRequestDTO;
 import java.util.Date;
 import io.swagger.model.Transaction;
-import io.swagger.model.TransactionResponseAndRequestDTO;
+import io.swagger.model.TransactionRequestDTO;
+import io.swagger.model.TransactionResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -46,10 +47,22 @@ public interface TransactionApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<TransactionResponseAndRequestDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body);
+    ResponseEntity<List<TransactionResponseDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body);
 
+    @Operation(summary = "get transactions by authorization", description = "get transactions list for authorized user, for history purpose * DATE TIME FORMAT: yyyy-MM-dd *", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
 
-    @Operation(summary = "get transactions per IBAN", description = "get transactions list by IBAN, for history purpose", security = {
+            @ApiResponse(responseCode = "400", description = "bad input parameter"),
+
+            @ApiResponse(responseCode = "401", description = "not allowed to load information for this IBAN") })
+    @RequestMapping(value = "/transaction",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<TransactionResponseDTO>> getTransaction(@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded *FORMAT: yyyy-MM-dd" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded *FORMAT: yyyy-MM-dd" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals);
+
+    @Operation(summary = "get transactions per IBAN", description = "get transactions list by IBAN, for history purpose * DATE TIME FORMAT: yyyy-MM-dd *", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
@@ -57,10 +70,10 @@ public interface TransactionApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "401", description = "not allowed to load information for this IBAN") })
-    @RequestMapping(value = "/transaction/{IBAN}",
+    @RequestMapping(value = "/transaction/IbanOnly/{IBAN}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<TransactionResponseAndRequestDTO>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals);
+    ResponseEntity<List<TransactionResponseDTO>> getTransactionByIban(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded *FORMAT: yyyy-MM-dd" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded *FORMAT: yyyy-MM-dd" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals, @Parameter(in = ParameterIn.QUERY, description = "Provide a Iban to get transactions related to that iban" ,schema=@Schema()) @Valid @RequestParam(value = "historyWithIban", required = false) String historyWithIban);
 
 
     @Operation(summary = "get transactions performing list by user id", description = "get transactions performing list by user id", security = {
@@ -74,7 +87,7 @@ public interface TransactionApi {
     @RequestMapping(value = "/transaction/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<TransactionResponseAndRequestDTO>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") String userId);
+    ResponseEntity<List<TransactionResponseDTO>> getTransactionByUserId(@Parameter(in = ParameterIn.PATH, description = "user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
 
 
     @Operation(summary = "creating a new transaction", description = "create a new transaction", security = {
@@ -89,7 +102,7 @@ public interface TransactionApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<Transaction>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionResponseAndRequestDTO body);
+    ResponseEntity<List<Transaction>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionRequestDTO body);
 
 
     @Operation(summary = "withdraw money from current account", description = "withdraw money from current account", security = {
@@ -104,7 +117,7 @@ public interface TransactionApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<TransactionResponseAndRequestDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body);
+    ResponseEntity<List<TransactionResponseDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body);
 
 }
 

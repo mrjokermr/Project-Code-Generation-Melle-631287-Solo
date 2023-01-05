@@ -42,7 +42,13 @@ public class UserApiController implements UserApi {
         this.request = request;
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<UserResponseDTO>> getUserInfo() {
+        User currentUser = userService.GetCurrentUserByAuthorization();
 
+        if(currentUser != null) return ResponseEntity.status(HttpStatus.OK).body(List.of(UserMapper.UserToUserResponseDTO(currentUser)));
+        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserResponseDTO>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts) {
         //returns a users list mapped so that the response doens't include a hashed password
@@ -51,7 +57,7 @@ public class UserApiController implements UserApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<UserResponseDTO>> getUserInfoById(@Parameter(in = ParameterIn.PATH, description = "the user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId) {
-        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId,null)) {
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(userId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {

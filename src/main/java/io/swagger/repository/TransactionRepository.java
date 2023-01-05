@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 
+    List<Transaction> findByIbanFromOrIbanTo(String ibanFrom, String ibanTo);
     List<Transaction> findByUserPerforming(Integer userPerforming);
 }
