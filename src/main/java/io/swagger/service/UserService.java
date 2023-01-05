@@ -2,9 +2,7 @@ package io.swagger.service;
 
 import io.swagger.Security.JwtTokenProvider;
 import io.swagger.mapper.UserMapper;
-import io.swagger.model.LoginResponseDTO;
-import io.swagger.model.User;
-import io.swagger.model.UserAccountType;
+import io.swagger.model.*;
 import io.swagger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +35,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private BankAccountService bankAccountService;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -54,6 +57,47 @@ public class UserService implements UserDetailsService {
                     .disabled(false)
                     .build();
         }
+    }
+
+    public User GetUserInfoById(Integer id) {
+        try {
+            return userRepository.findById(id).get();
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+    public Boolean CustomerIsExecutingApiCallThatIsNotTargetedForHimself(Integer targetId, String targetIban) {
+        User userMakingTheCall = GetCurrentUserByAuthorization();
+
+        if(userMakingTheCall == null) return true;
+        //this line below is for making sure that the current user is not an employee or admin
+        else if(userMakingTheCall.getUserType().equals(UserAccountType.ROLE_EMPLOYEE) || userMakingTheCall.getUserType().equals(UserAccountType.ROLE_BANKADMIN)) return false;
+        else if(targetId != null && targetId != userMakingTheCall.getId()) {
+            return true;
+        }
+        else if(targetIban != null) {
+            //get ibans for the user
+            List<BankAccount> bankAccountsOwnedByCustomer = bankAccountService.GetAllBankAccountsForUser(targetId);
+
+            for(int i = 0; i < bankAccountsOwnedByCustomer.size(); i++) {
+                if(bankAccountsOwnedByCustomer.get(i).getIban().equals(targetIban)) return false;
+            }
+
+            return true; //the targeted IBAN doesn't match the customers IBAN(s)
+        }
+        else return false;
+    }
+
+    public User GetCurrentUserByAuthorization() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+
+        return userRepository.findByUsername(currentUserName);
+    }
+
+    public List<User> GetMatchingUsersByFirstAndLastName(String firstName, String lastName) {
+        return userRepository.findByFirstNameAndLastNameLike(firstName, lastName);
     }
 
     public LoginResponseDTO Login(String username, String password) {
@@ -76,24 +120,94 @@ public class UserService implements UserDetailsService {
         }
 
     }
-    public User TestNewUserAdd() {
-        User u = new User();
-        u.setUsername("CarolinaVeldman2022");
-        u.transactionLimit(30.0);
-        u.setCreationDate(new Date());
-        u.setDayLimit(10);
-        u.setFirstName("Carolina");
-        u.setLastName("Veldman");
-        u.setUserType(UserAccountType.ROLE_EMPLOYEE);
-        u.setPassword(passwordEncoder.encode("geheim"));
 
-        userRepository.save(u);
-
-        return u;
+    public Boolean UsernameIsUnique(String username) {
+        if(userRepository.findByUsername(username) == null) return true;
+        else return false;
     }
 
-    public List<User> GetAllUsers() {
-        return userRepository.findAll();
+    public User UpdateUserInfoByBody(UpdateUserRequestDTO body) {
+        try {
+            User targetUser = userRepository.findById(body.getTargetUserId()).get();
+            if(targetUser == null) return null;
+            else {
+                targetUser.setFirstName(body.getFirstName());
+                targetUser.setLastName(body.getLastName());
+                targetUser.setDayLimit(body.getDayLimit());
+                targetUser.setTransactionLimit(body.getTransactionLimit());
+
+                userRepository.save(targetUser);
+                return targetUser;
+            }
+
+
+        }
+        catch(Exception e) { return null; }
+    }
+
+    public User RegisterUserByAEmployee(NewUserEmployeeRequestDTO body) {
+        try {
+            User u = new User();
+            u.setDayLimit(body.getDayLimit());
+            u.setFirstName(body.getFirstName());
+            u.setLastName(body.getLastName());
+            u.setPassword(body.getPassword());
+            u.setTransactionLimit(body.getTransactionLimit());
+            u.setUsername(body.getUsername());
+            u.setUserType(body.getUserType());
+            u.setCreationDate(new Date());
+
+            userRepository.save(u);
+            return u;
+        }
+        catch(Exception e) { return null; }
+    }
+
+    public User RegisterUserAsCustomer(NewUserRequestDTO body) {
+        try {
+            User u = new User();
+            u.setDayLimit(body.getDayLimit());
+            u.setFirstName(body.getFirstName());
+            u.setLastName(body.getLastName());
+            u.setPassword(body.getPassword());
+            u.setTransactionLimit(body.getTransactionLimit());
+            u.setUsername(body.getUsername());
+            u.setUserType(UserAccountType.ROLE_CUSTOMER);
+            u.setCreationDate(new Date());
+
+            userRepository.save(u);
+            return u;
+        }
+        catch(Exception e) { return null; }
+
+    }
+//    public User TestNewUserAdd() {
+//        User u = new User();
+//        u.setUsername("CarolinaVeldman2022");
+//        u.transactionLimit(30.0);
+//        u.setCreationDate(new Date());
+//        u.setDayLimit(10);
+//        u.setFirstName("Carolina");
+//        u.setLastName("Veldman");
+//        u.setUserType(UserAccountType.ROLE_EMPLOYEE);
+//        u.setPassword(passwordEncoder.encode("geheim"));
+//
+//        userRepository.save(u);
+//
+//        return u;
+//    }
+
+    public List<User> GetAllUsers(Boolean onlyUsersWithoutABankAccount) {
+        List<User> allUsers = userRepository.findAll();
+        allUsers.removeIf(u -> u.getUserType().equals(UserAccountType.ROLE_BANKADMIN)); //remove the bank account owner user from the list
+
+        if(!onlyUsersWithoutABankAccount) return allUsers;
+        else {
+            List<User> usersWithoutABankAccount = new ArrayList<>();
+            for(User u : allUsers) if(bankAccountService.GetAllBankAccountsForUser(u.getId()).size() == 0) usersWithoutABankAccount.add(u);
+
+            return usersWithoutABankAccount;
+        }
     }
 
 }

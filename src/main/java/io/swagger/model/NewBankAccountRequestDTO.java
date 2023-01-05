@@ -2,9 +2,6 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.BankAccountStatus;
-import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +20,10 @@ public class NewBankAccountRequestDTO   {
   private Integer ownerId = null;
 
   @JsonProperty("accountStatus")
-  private BankAccountType accountStatus = null;
+  private BankAccountStatus accountStatus = null;
 
   @JsonProperty("accountType")
-  private BankAccountStatus accountType = null;
+  private BankAccountType accountType = null;
 
   @JsonProperty("absoluteLimit")
   private Double absoluteLimit = null;
@@ -51,7 +48,7 @@ public class NewBankAccountRequestDTO   {
     this.ownerId = ownerId;
   }
 
-  public NewBankAccountRequestDTO accountStatus(BankAccountType accountStatus) {
+  public NewBankAccountRequestDTO accountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
     return this;
   }
@@ -64,15 +61,15 @@ public class NewBankAccountRequestDTO   {
       @NotNull
 
     @Valid
-    public BankAccountType getAccountStatus() {
+    public BankAccountStatus getAccountStatus() {
     return accountStatus;
   }
 
-  public void setAccountStatus(BankAccountType accountStatus) {
+  public void setAccountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
   }
 
-  public NewBankAccountRequestDTO accountType(BankAccountStatus accountType) {
+  public NewBankAccountRequestDTO accountType(BankAccountType accountType) {
     this.accountType = accountType;
     return this;
   }
@@ -85,11 +82,11 @@ public class NewBankAccountRequestDTO   {
       @NotNull
 
     @Valid
-    public BankAccountStatus getAccountType() {
+    public BankAccountType getAccountType() {
     return accountType;
   }
 
-  public void setAccountType(BankAccountStatus accountType) {
+  public void setAccountType(BankAccountType accountType) {
     this.accountType = accountType;
   }
 

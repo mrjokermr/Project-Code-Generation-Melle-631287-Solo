@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -19,7 +17,7 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
 
-public class TransactionResponseDTO {
+public class TransactionResponseAndRequestDTO {
   @JsonProperty("ibanFrom")
   private String ibanFrom = null;
 
@@ -32,42 +30,21 @@ public class TransactionResponseDTO {
   @JsonProperty("userPerforming")
   private Integer userPerforming = null;
 
+  @JsonProperty("creationDate")
+  private Date creationDate = null;
+
+  public TransactionResponseAndRequestDTO creationDate(Date creationDate) {
+    this.creationDate = creationDate;
+    return this;
+  }
+
   /**
    * Gets or Sets transactionType
    */
-  public enum TransactionTypeEnum {
-    REGULAR("regular"),
-    
-    WITHDRAW("withdraw"),
-    
-    DEPOSIT("deposit");
-
-    private String value;
-
-    TransactionTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TransactionTypeEnum fromValue(String text) {
-      for (TransactionTypeEnum b : TransactionTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("transactionType")
-  private TransactionTypeEnum transactionType = null;
+  private Transaction.TransactionTypeEnum transactionType = null;
 
-  public TransactionResponseDTO ibanFrom(String ibanFrom) {
+  public TransactionResponseAndRequestDTO ibanFrom(String ibanFrom) {
     this.ibanFrom = ibanFrom;
     return this;
   }
@@ -87,7 +64,7 @@ public class TransactionResponseDTO {
     this.ibanFrom = ibanFrom;
   }
 
-  public TransactionResponseDTO ibanTo(String ibanTo) {
+  public TransactionResponseAndRequestDTO ibanTo(String ibanTo) {
     this.ibanTo = ibanTo;
     return this;
   }
@@ -107,7 +84,7 @@ public class TransactionResponseDTO {
     this.ibanTo = ibanTo;
   }
 
-  public TransactionResponseDTO amount(Double amount) {
+  public TransactionResponseAndRequestDTO amount(Double amount) {
     this.amount = amount;
     return this;
   }
@@ -128,7 +105,7 @@ public class TransactionResponseDTO {
     this.amount = amount;
   }
 
-  public TransactionResponseDTO userPerforming(Integer userPerforming) {
+  public TransactionResponseAndRequestDTO userPerforming(Integer userPerforming) {
     this.userPerforming = userPerforming;
     return this;
   }
@@ -148,7 +125,7 @@ public class TransactionResponseDTO {
     this.userPerforming = userPerforming;
   }
 
-  public TransactionResponseDTO transactionType(TransactionTypeEnum transactionType) {
+  public TransactionResponseAndRequestDTO transactionType(Transaction.TransactionTypeEnum transactionType) {
     this.transactionType = transactionType;
     return this;
   }
@@ -160,11 +137,11 @@ public class TransactionResponseDTO {
   @Schema(required = true, description = "")
       @NotNull
 
-    public TransactionTypeEnum getTransactionType() {
+    public Transaction.TransactionTypeEnum getTransactionType() {
     return transactionType;
   }
 
-  public void setTransactionType(TransactionTypeEnum transactionType) {
+  public void setTransactionType(Transaction.TransactionTypeEnum transactionType) {
     this.transactionType = transactionType;
   }
 
@@ -177,7 +154,7 @@ public class TransactionResponseDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TransactionResponseDTO transaction = (TransactionResponseDTO) o;
+    TransactionResponseAndRequestDTO transaction = (TransactionResponseAndRequestDTO) o;
     return Objects.equals(this.ibanFrom, transaction.ibanFrom) &&
         Objects.equals(this.ibanTo, transaction.ibanTo) &&
         Objects.equals(this.amount, transaction.amount) &&

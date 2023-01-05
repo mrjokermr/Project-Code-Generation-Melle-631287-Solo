@@ -31,8 +31,12 @@ public class NewUserRequestDTO   {
   @JsonProperty("dayLimit")
   private Integer dayLimit = null;
 
+  public Integer getDayLimit() { return this.dayLimit; }
+
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
+
+  public Double getTransactionLimit() { return this.transactionLimit; }
 
   public void setDayLimit(Integer dayLimit) {
     this.dayLimit = dayLimit;

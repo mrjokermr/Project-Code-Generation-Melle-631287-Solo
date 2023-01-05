@@ -5,11 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.LoginRequestDTO;
-import io.swagger.model.LoginResponseDTO;
-import io.swagger.model.NewUserEmployeeRequestDTO;
-import io.swagger.model.NewUserRequestDTO;
-import io.swagger.model.User;
+import io.swagger.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -23,18 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-12-30T12:05:52.189Z[GMT]")
 @Validated
@@ -51,7 +41,7 @@ public interface UserApi {
     @RequestMapping(value = "/user",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts);
+    ResponseEntity<List<UserResponseDTO>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts);
 
 
     @Operation(summary = "get user info by user id", description = "load all user info by user id", tags={ "user" })
@@ -64,7 +54,7 @@ public interface UserApi {
     @RequestMapping(value = "/user/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUserInfoById(@Parameter(in = ParameterIn.PATH, description = "the user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") String userId);
+    ResponseEntity<List<UserResponseDTO>> getUserInfoById(@Parameter(in = ParameterIn.PATH, description = "the user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
 
 
     @Operation(summary = "register a new user as customer", description = "register yourself with credentials", tags={ "user" })
@@ -78,7 +68,7 @@ public interface UserApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<User>> postRegisterUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserRequestDTO body);
+    ResponseEntity<List<UserResponseDTO>> postRegisterUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserRequestDTO body);
 
 
     @Operation(summary = "register a new user performed by an employee", description = "more info can be put inside the requestbody", security = {
@@ -93,7 +83,7 @@ public interface UserApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<User>> postUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserEmployeeRequestDTO body);
+    ResponseEntity<List<UserResponseDTO>> postUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserEmployeeRequestDTO body);
 
 
     @Operation(summary = "update user info", description = "update user info by the info delivered in the requestbody", security = {
@@ -108,7 +98,7 @@ public interface UserApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<List<User>> putUser(@Parameter(in = ParameterIn.DEFAULT, description = "updated info for this user", required=true, schema=@Schema()) @Valid @RequestBody NewUserRequestDTO body);
+    ResponseEntity<List<UserResponseDTO>> putUser(@Parameter(in = ParameterIn.DEFAULT, description = "updated info for this user", required=true, schema=@Schema()) @Valid @RequestBody UpdateUserRequestDTO body);
 
 
     @Operation(summary = "login to obtain an auth token", description = "login to obtain an auth token", tags={ "user" })

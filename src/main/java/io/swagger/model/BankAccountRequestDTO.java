@@ -2,9 +2,6 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.BankAccountStatus;
-import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import org.springframework.validation.annotation.Validated;
@@ -19,20 +16,20 @@ import javax.validation.constraints.*;
 
 
 public class BankAccountRequestDTO   {
-  @JsonProperty("IBAN")
-  private String IBAN = null;
+  @JsonProperty("iban")
+  private String iban = null;
 
   @JsonProperty("accountStatus")
-  private BankAccountType accountStatus = null;
+  private BankAccountStatus accountStatus = null;
 
   @JsonProperty("accountType")
-  private BankAccountStatus accountType = null;
+  private BankAccountType accountType = null;
 
   @JsonProperty("absoluteLimit")
   private Double absoluteLimit = null;
 
   public BankAccountRequestDTO IBAN(String IBAN) {
-    this.IBAN = IBAN;
+    this.iban = IBAN;
     return this;
   }
 
@@ -43,15 +40,15 @@ public class BankAccountRequestDTO   {
   @Schema(example = "NLHDINHO0235930399", required = true, description = "")
       @NotNull
 
-    public String getIBAN() {
-    return IBAN;
+    public String getIban() {
+    return iban;
   }
 
-  public void setIBAN(String IBAN) {
-    this.IBAN = IBAN;
+  public void setIban(String iban) {
+    this.iban = iban;
   }
 
-  public BankAccountRequestDTO accountStatus(BankAccountType accountStatus) {
+  public BankAccountRequestDTO accountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
     return this;
   }
@@ -64,15 +61,15 @@ public class BankAccountRequestDTO   {
       @NotNull
 
     @Valid
-    public BankAccountType getAccountStatus() {
+    public BankAccountStatus getAccountStatus() {
     return accountStatus;
   }
 
-  public void setAccountStatus(BankAccountType accountStatus) {
+  public void setAccountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
   }
 
-  public BankAccountRequestDTO accountType(BankAccountStatus accountType) {
+  public BankAccountRequestDTO accountType(BankAccountType accountType) {
     this.accountType = accountType;
     return this;
   }
@@ -85,11 +82,11 @@ public class BankAccountRequestDTO   {
       @NotNull
 
     @Valid
-    public BankAccountStatus getAccountType() {
+    public BankAccountType getAccountType() {
     return accountType;
   }
 
-  public void setAccountType(BankAccountStatus accountType) {
+  public void setAccountType(BankAccountType accountType) {
     this.accountType = accountType;
   }
 
@@ -124,7 +121,7 @@ public class BankAccountRequestDTO   {
       return false;
     }
     BankAccountRequestDTO bankAccountRequestDTO = (BankAccountRequestDTO) o;
-    return Objects.equals(this.IBAN, bankAccountRequestDTO.IBAN) &&
+    return Objects.equals(this.iban, bankAccountRequestDTO.iban) &&
         Objects.equals(this.accountStatus, bankAccountRequestDTO.accountStatus) &&
         Objects.equals(this.accountType, bankAccountRequestDTO.accountType) &&
         Objects.equals(this.absoluteLimit, bankAccountRequestDTO.absoluteLimit);
@@ -132,7 +129,7 @@ public class BankAccountRequestDTO   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(IBAN, accountStatus, accountType, absoluteLimit);
+    return Objects.hash(iban, accountStatus, accountType, absoluteLimit);
   }
 
   @Override
@@ -140,7 +137,7 @@ public class BankAccountRequestDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class BankAccountRequestDTO {\n");
     
-    sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
+    sb.append("    IBAN: ").append(toIndentedString(iban)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("    accountType: ").append(toIndentedString(accountType)).append("\n");
     sb.append("    absoluteLimit: ").append(toIndentedString(absoluteLimit)).append("\n");

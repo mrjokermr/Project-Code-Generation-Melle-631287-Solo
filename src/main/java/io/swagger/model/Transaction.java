@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import java.util.Date;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,6 +41,30 @@ public class Transaction   {
 
   @JsonProperty("userPerforming")
   private Integer userPerforming = null;
+
+  @JsonProperty("creationDate")
+  private Date creationDate = null;
+
+  public Transaction creationDate(Date creationDate) {
+    this.creationDate = creationDate;
+    return this;
+  }
+
+  /**
+   * Get creationDate
+   * @return creationDate
+   **/
+  @Schema(example = "2016-08-29T09:12:33.001Z", required = true, description = "")
+  @NotNull
+
+  @Valid
+  public Date getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
 
   /**
    * Gets or Sets transactionType

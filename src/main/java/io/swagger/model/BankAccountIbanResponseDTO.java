@@ -2,10 +2,9 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+
 import javax.validation.constraints.*;
 
 /**
@@ -16,11 +15,52 @@ import javax.validation.constraints.*;
 
 
 public class BankAccountIbanResponseDTO   {
-  @JsonProperty("IBAN")
-  private String IBAN = null;
+  @JsonProperty("Iban")
+  private String iban = null;
 
-  public BankAccountIbanResponseDTO IBAN(String IBAN) {
-    this.IBAN = IBAN;
+  @JsonProperty("OwnersFirstName")
+  private String ownersFirstName = null;
+
+  @JsonProperty("OwnersLastName")
+  private String ownersLastName = null;
+
+  @JsonProperty("OwnerId")
+  private Integer ownerId = null;
+
+  @Schema(example = "1", required = true, description = "")
+  @NotNull
+
+  public Integer getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(Integer ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  @Schema(example = "Peter", required = true, description = "")
+  @NotNull
+
+  public String getOwnersFirstName() {
+    return ownersFirstName;
+  }
+
+  public void setOwnersFirstName(String ownersFirstName) {
+    this.ownersFirstName = ownersFirstName;
+  }
+
+  @Schema(example = "Kluivert", required = true, description = "")
+  @NotNull
+
+  public String getOwnersLastName() {
+    return ownersLastName;
+  }
+
+  public void setOwnersLastName(String ownersLastName) {
+    this.ownersLastName = ownersLastName;
+  }
+  public BankAccountIbanResponseDTO iban(String iban) {
+    this.iban = iban;
     return this;
   }
 
@@ -31,12 +71,12 @@ public class BankAccountIbanResponseDTO   {
   @Schema(example = "NLHDINHO0235930399", required = true, description = "")
       @NotNull
 
-    public String getIBAN() {
-    return IBAN;
+    public String getIban() {
+    return iban;
   }
 
-  public void setIBAN(String IBAN) {
-    this.IBAN = IBAN;
+  public void setIban(String iban) {
+    this.iban = iban;
   }
 
 
@@ -49,12 +89,12 @@ public class BankAccountIbanResponseDTO   {
       return false;
     }
     BankAccountIbanResponseDTO bankAccountIbanResponseDTO = (BankAccountIbanResponseDTO) o;
-    return Objects.equals(this.IBAN, bankAccountIbanResponseDTO.IBAN);
+    return Objects.equals(this.iban, bankAccountIbanResponseDTO.iban);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(IBAN);
+    return Objects.hash(iban);
   }
 
   @Override
@@ -62,7 +102,7 @@ public class BankAccountIbanResponseDTO   {
     StringBuilder sb = new StringBuilder();
     sb.append("class BankAccountIbanResponseDTO {\n");
     
-    sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
+    sb.append("    IBAN: ").append(toIndentedString(iban)).append("\n");
     sb.append("}");
     return sb.toString();
   }

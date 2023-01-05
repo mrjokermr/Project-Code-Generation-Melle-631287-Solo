@@ -2,17 +2,11 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.BankAccountStatus;
-import io.swagger.model.BankAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -29,8 +23,9 @@ public class BankAccount   {
   @GeneratedValue
   private Integer id = null;
 
-  @JsonProperty("IBAN")
-  private String IBAN = null;
+  @JsonProperty("iban")
+  @Column(name ="iban")
+  private String iban = null;
 
   @JsonProperty("ownerId")
   private Integer ownerId = null;
@@ -38,11 +33,11 @@ public class BankAccount   {
   @JsonProperty("balance")
   private Double balance = null;
 
-  @JsonProperty("accountStatus")
-  private BankAccountType accountStatus = null;
-
   @JsonProperty("accountType")
-  private BankAccountStatus accountType = null;
+  private BankAccountType accountType = null;
+
+  @JsonProperty("accountStatus")
+  private BankAccountStatus accountStatus = null; //accountStatus
 
   @JsonProperty("absoluteLimit")
   private Double absoluteLimit = null;
@@ -71,7 +66,7 @@ public class BankAccount   {
   }
 
   public BankAccount IBAN(String IBAN) {
-    this.IBAN = IBAN;
+    this.iban = IBAN;
     return this;
   }
 
@@ -82,12 +77,12 @@ public class BankAccount   {
   @Schema(example = "NLHDINHO0235930399", required = true, description = "")
       @NotNull
 
-    public String getIBAN() {
-    return IBAN;
+    public String getIban() {
+    return iban;
   }
 
-  public void setIBAN(String IBAN) {
-    this.IBAN = IBAN;
+  public void setIban(String iban) {
+    this.iban = iban;
   }
 
   public BankAccount ownerId(Integer ownerId) {
@@ -131,7 +126,7 @@ public class BankAccount   {
     this.balance = balance;
   }
 
-  public BankAccount accountStatus(BankAccountType accountStatus) {
+  public BankAccount accountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
     return this;
   }
@@ -143,15 +138,15 @@ public class BankAccount   {
   @Schema(description = "")
   
     @Valid
-    public BankAccountType getAccountStatus() {
+    public BankAccountStatus getAccountStatus() {
     return accountStatus;
   }
 
-  public void setAccountStatus(BankAccountType accountStatus) {
+  public void setAccountStatus(BankAccountStatus accountStatus) {
     this.accountStatus = accountStatus;
   }
 
-  public BankAccount accountType(BankAccountStatus accountType) {
+  public BankAccount accountType(BankAccountType accountType) {
     this.accountType = accountType;
     return this;
   }
@@ -163,11 +158,11 @@ public class BankAccount   {
   @Schema(description = "")
   
     @Valid
-    public BankAccountStatus getAccountType() {
+    public BankAccountType getAccountType() {
     return accountType;
   }
 
-  public void setAccountType(BankAccountStatus accountType) {
+  public void setAccountType(BankAccountType accountType) {
     this.accountType = accountType;
   }
 
@@ -224,7 +219,7 @@ public class BankAccount   {
     }
     BankAccount bankAccount = (BankAccount) o;
     return Objects.equals(this.id, bankAccount.id) &&
-        Objects.equals(this.IBAN, bankAccount.IBAN) &&
+        Objects.equals(this.iban, bankAccount.iban) &&
         Objects.equals(this.ownerId, bankAccount.ownerId) &&
         Objects.equals(this.balance, bankAccount.balance) &&
         Objects.equals(this.accountStatus, bankAccount.accountStatus) &&
@@ -235,7 +230,7 @@ public class BankAccount   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, IBAN, ownerId, balance, accountStatus, accountType, absoluteLimit, creationDate);
+    return Objects.hash(id, iban, ownerId, balance, accountStatus, accountType, absoluteLimit, creationDate);
   }
 
   @Override
@@ -244,7 +239,7 @@ public class BankAccount   {
     sb.append("class BankAccount {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
+    sb.append("    IBAN: ").append(toIndentedString(iban)).append("\n");
     sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");

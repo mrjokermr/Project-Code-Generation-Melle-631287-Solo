@@ -60,7 +60,7 @@ public interface BankaccountApi {
         @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BankAccount.class)))),
         
         @ApiResponse(responseCode = "401", description = "not allowed to load information") })
-    @RequestMapping(value = "/bankaccount",
+    @RequestMapping(value = "/bankaccounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<BankAccount>> getAllBankAccounts();
@@ -80,7 +80,7 @@ public interface BankaccountApi {
     ResponseEntity<List<BankAccount>> getBankAccountByIBAN(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN);
 
 
-    @Operation(summary = "get IBAN by full name", description = "", security = {
+    @Operation(summary = "get IBAN(s) by full name", description = "Be aware that persons can have the same full name and the result will lists multiple current IBANs with extra info", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "bankaccount" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BankAccountIbanResponseDTO.class)))),
@@ -88,7 +88,7 @@ public interface BankaccountApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "401", description = "not allowed to load this information") })
-    @RequestMapping(value = "/bankaccount/{fullName}",
+    @RequestMapping(value = "/bankaccounts/{fullName}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<BankAccountIbanResponseDTO>> getIbanByFullName(@Parameter(in = ParameterIn.PATH, description = "fullname from which the iban has to be loaded", required=true, schema=@Schema()) @PathVariable("fullName") String fullName);
@@ -105,7 +105,7 @@ public interface BankaccountApi {
     @RequestMapping(value = "/bankaccount/totalBalance/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<TotalBalanceResponseDTO>> getTotalBalanceForAccounts(@Parameter(in = ParameterIn.PATH, description = "user id from which the total balance has to be loaded for", required=true, schema=@Schema()) @PathVariable("userId") String userId);
+    ResponseEntity<List<TotalBalanceResponseDTO>> getTotalBalanceForAccounts(@Parameter(in = ParameterIn.PATH, description = "user id from which the total balance has to be loaded for", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
 
 
     @Operation(summary = "create a new bankaccount", description = "Post Bank account information if you have the right rights ", security = {

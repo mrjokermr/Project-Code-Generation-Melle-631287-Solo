@@ -20,6 +20,10 @@ public class TotalBalanceResponseDTO   {
   @JsonProperty("amount")
   private Double amount = null;
 
+  public TotalBalanceResponseDTO(Double totalAmount) {
+    this.amount = totalAmount;
+  }
+
   public TotalBalanceResponseDTO amount(Double amount) {
     this.amount = amount;
     return this;

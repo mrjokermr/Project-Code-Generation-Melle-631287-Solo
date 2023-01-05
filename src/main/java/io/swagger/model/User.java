@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.Security.PasswordEncoderHolder;
 import io.swagger.model.UserAccountType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.lang.Nullable;
@@ -149,6 +150,10 @@ public class User   {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void setEncryptedPassword(String password) {
+    this.password = PasswordEncoderHolder.passwordEncoder.encode(password);
   }
 
   public User userType(UserAccountType userType) {
