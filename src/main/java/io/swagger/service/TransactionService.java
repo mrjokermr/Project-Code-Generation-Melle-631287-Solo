@@ -173,7 +173,7 @@ public class TransactionService {
 
                 Double amountToTransfer = body.getAmount();
 
-                if(BankAccountCanPerformThisTransaction(fromBa, amountToTransfer)) {
+                if(BankAccountCanPerformThisTransaction(fromBa, amountToTransfer,false)) {
                     //bank account is able to perform this transfer
                     Transaction newTransaction = new Transaction();
                     newTransaction.setTransactionType(Transaction.TransactionTypeEnum.REGULAR);
@@ -215,10 +215,10 @@ public class TransactionService {
         try {
 
             BankAccount targetBankAccount = bankAccountService.GetBankAccountByIban(body.getIban());
-            Double amount = body.getAmount();
+            Double amount = Math.abs(body.getAmount());
 
 
-            if(BankAccountCanPerformThisTransaction(targetBankAccount,amount)) {
+            if(BankAccountCanPerformThisTransaction(targetBankAccount,amount, type == Transaction.TransactionTypeEnum.DEPOSIT)) {
                 //day limit, transaction limit and absolute limit are checked and OK
 
                 if(type.equals(Transaction.TransactionTypeEnum.DEPOSIT)) {
@@ -276,7 +276,7 @@ public class TransactionService {
 
 
     }
-    public Boolean BankAccountCanPerformThisTransaction(BankAccount bankAccount, Double amountToTransfer) {
+    public Boolean BankAccountCanPerformThisTransaction(BankAccount bankAccount, Double amountToTransfer, Boolean isDepositTransaction) {
         //check the daily limit and transactionlimit and balance (can become lower than)
 
         //-	Balance cannot become lower than a certain number defined per account, referred to as absolute limit
@@ -298,7 +298,10 @@ public class TransactionService {
                 if(amountToTransfer <= bankAccountOwner.getTransactionLimit()) transactionAmountLimitCondition = true;
 
                 boolean bankAccountBalanceCondition = false;
-                if(bankAccount.getBalance() - amountToTransfer >= bankAccount.getAbsoluteLimit()) bankAccountBalanceCondition = true;
+                if(!isDepositTransaction) {
+                    if(bankAccount.getBalance() - amountToTransfer >= bankAccount.getAbsoluteLimit()) bankAccountBalanceCondition = true;
+                }
+                else bankAccountBalanceCondition = true; //if it is a deposit transaction the balance condition is always true
 
                 //check if conditions are met and if so return true else return false
                 if(dayLimitCondition && transactionAmountLimitCondition && bankAccountBalanceCondition) return true;
