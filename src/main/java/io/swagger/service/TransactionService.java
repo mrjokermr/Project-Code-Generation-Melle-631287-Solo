@@ -215,6 +215,9 @@ public class TransactionService {
         try {
 
             BankAccount targetBankAccount = bankAccountService.GetBankAccountByIban(body.getIban());
+            //if a bank account is not of the type current money can't be withdrawn or deposited
+            if(targetBankAccount.getAccountType().equals(BankAccountType.SAVINGS)) return null; //return if true
+
             Double amount = Math.abs(body.getAmount());
 
 
