@@ -16,7 +16,7 @@ public class TransactionMapper {
         responseObject.setTransactionType(t.getTransactionType());
         responseObject.setIbanFrom(t.getIbanFrom());
         responseObject.setIbanTo(t.getIbanTo());
-        //responseObject.setCreationDate(t.getCreationDate());
+        responseObject.setCreationDate(t.getCreationDate());
         responseObject.setUserPerforming(t.getUserPerforming());
 
         return responseObject;

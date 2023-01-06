@@ -143,6 +143,8 @@ public class TransactionService {
         return filteredTransactionsList;
     }
 
+
+
     public List<Transaction> GetTransactionsByIban(String iban, Double amountEquals) {
         List<Transaction> usersTransactions = GetTransactionsByIban(iban);
         List<Transaction> filteredTransactionsList = new ArrayList<>();
@@ -209,6 +211,71 @@ public class TransactionService {
         return listToReturn;
     }
 
+    public Transaction WithdrawOrDepositMoney(DepositOrWithdrawRequestDTO body, Transaction.TransactionTypeEnum type) {
+        try {
+
+            BankAccount targetBankAccount = bankAccountService.GetBankAccountByIban(body.getIban());
+            Double amount = body.getAmount();
+
+
+            if(BankAccountCanPerformThisTransaction(targetBankAccount,amount)) {
+                //day limit, transaction limit and absolute limit are checked and OK
+
+                if(type.equals(Transaction.TransactionTypeEnum.DEPOSIT)) {
+                    //add money
+                    return CreateAWithdrawOrDepositTransaction(amount, targetBankAccount, Transaction.TransactionTypeEnum.DEPOSIT);
+                }
+                else if(type.equals(Transaction.TransactionTypeEnum.WITHDRAW))  {
+                    //remove money
+                    return CreateAWithdrawOrDepositTransaction(amount, targetBankAccount, Transaction.TransactionTypeEnum.WITHDRAW);
+                }
+                else return null;
+
+
+            }
+            else return null;
+
+        }
+        catch(Exception e) {
+            return null;
+        }
+
+    }
+
+    private Transaction CreateAWithdrawOrDepositTransaction(Double amount,BankAccount targetBankAccount , Transaction.TransactionTypeEnum type) {
+        Transaction transaction = new Transaction();
+        String iban = targetBankAccount.getIban();
+
+        transaction.setIbanTo(iban);
+        transaction.setIbanFrom(iban);
+
+        Integer userPerformingId = userService.GetCurrentAuthorizedUserId();
+        if(userPerformingId != null) transaction.setUserPerforming(userService.GetCurrentAuthorizedUserId());
+        else return null;
+
+        transaction.setCreationDate(new Date());
+        transaction.setAmount(amount);
+        transaction.setTransactionType(type);
+
+        //update the balance and save it for the bank account
+        Double amountToTransfer = Math.abs(amount);
+
+        if(type.equals(Transaction.TransactionTypeEnum.WITHDRAW)) targetBankAccount.setBalance(targetBankAccount.getBalance() - amountToTransfer);
+        else if(type.equals(Transaction.TransactionTypeEnum.DEPOSIT)) targetBankAccount.setBalance(targetBankAccount.getBalance() + amountToTransfer);
+
+        try {
+            //save the updated bank account balance and return the created transaction
+            bankAccountService.SaveBankAccount(targetBankAccount);
+
+            return transaction;
+        }
+        catch(Exception e) {
+            return null;
+        }
+
+
+
+    }
     public Boolean BankAccountCanPerformThisTransaction(BankAccount bankAccount, Double amountToTransfer) {
         //check the daily limit and transactionlimit and balance (can become lower than)
 

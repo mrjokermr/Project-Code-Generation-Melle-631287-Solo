@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.Transaction;
 import io.swagger.model.TransactionRequestDTO;
 import io.swagger.model.TransactionResponseDTO;
+import io.swagger.service.BankAccountService;
 import io.swagger.service.TransactionService;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,6 +43,9 @@ public class TransactionApiController implements TransactionApi {
     private TransactionService transactionService;
 
     @Autowired
+    private BankAccountService bankAccountService;
+
+    @Autowired
     private UserService userService;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -51,8 +55,18 @@ public class TransactionApiController implements TransactionApi {
     }
 
     public ResponseEntity<List<TransactionResponseDTO>> depositTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
+        //withdraw/deposit actions can only be performed by the employee/customer him-/herself so the targeted iban has to be owned by the authorized user
+        //CustomerIsExecutingApiCallThatIsNotTargetedForHimself function can't be used because it allows a customer to perform this transaction
+        if(userService.AuthUserIsOwnerOfThisIban(body.getIban())) {
+            Transaction newTransaction = transactionService.WithdrawOrDepositMoney(body, Transaction.TransactionTypeEnum.DEPOSIT);
 
-        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
+            if(newTransaction != null)
+                return ResponseEntity.status(HttpStatus.OK).body(List.of(TransactionMapper.TransactionToResponseDTO(newTransaction)));
+            else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
@@ -171,9 +185,21 @@ public class TransactionApiController implements TransactionApi {
 
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<TransactionResponseDTO>> withdrawTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for withdrawing or depositing money", required=true, schema=@Schema()) @Valid @RequestBody DepositOrWithdrawRequestDTO body) {
+        //withdraw/deposit actions can only be performed by the employee/customer him-/herself so the targeted iban has to be owned by the authorized user
+        //CustomerIsExecutingApiCallThatIsNotTargetedForHimself function can't be used because it allows a customer to perform this transaction
+        if(userService.AuthUserIsOwnerOfThisIban(body.getIban())) {
+            Transaction newTransaction = transactionService.WithdrawOrDepositMoney(body, Transaction.TransactionTypeEnum.WITHDRAW);
 
-        return new ResponseEntity<List<TransactionResponseDTO>>(HttpStatus.NOT_IMPLEMENTED);
+            if(newTransaction != null)
+                return ResponseEntity.status(HttpStatus.OK).body(List.of(TransactionMapper.TransactionToResponseDTO(newTransaction)));
+            else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
     }
 
 }

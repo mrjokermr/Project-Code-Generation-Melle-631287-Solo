@@ -105,7 +105,7 @@ public interface TransactionApi {
     ResponseEntity<List<Transaction>> postTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "transaction body for creating a transaction", required=true, schema=@Schema()) @Valid @RequestBody TransactionRequestDTO body);
 
 
-    @Operation(summary = "withdraw money from current account", description = "withdraw money from current account", security = {
+    @Operation(summary = "withdraw money from current account", description = "withdraw money from current account make *amount will always be converted to a not negative number", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully created a new transaction", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),

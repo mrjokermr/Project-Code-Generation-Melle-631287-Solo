@@ -71,6 +71,14 @@ public class UserService implements UserDetailsService {
     public Integer GetCurrentAuthorizedUserId() {
         return GetCurrentUserByAuthorization().getId();
     }
+
+    public Boolean AuthUserIsOwnerOfThisIban(String iban) {
+        BankAccount bankAccount = bankAccountService.GetBankAccountByIban(iban);
+        User authorizedUser = GetCurrentUserByAuthorization();
+
+        if(bankAccount.getOwnerId().equals(authorizedUser.getId())) return true;
+        else return false;
+    }
     public Boolean CustomerIsExecutingApiCallThatIsNotTargetedForHimself(Integer targetId) {
         if(targetId < 0) return true;
 
