@@ -123,7 +123,7 @@ public interface BankaccountApi {
     ResponseEntity<List<BankAccount>> postBankAccount(@Parameter(in = ParameterIn.DEFAULT, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @Valid @RequestBody NewBankAccountRequestDTO body);
 
 
-    @Operation(summary = "update bank account info by IBAN", description = "Put Bank account information if you have the right rights ", security = {
+    @Operation(summary = "update bank account info", description = "Put Bank account information if you have the right rights ", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "bankaccount" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully changed information", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BankAccount.class)))),

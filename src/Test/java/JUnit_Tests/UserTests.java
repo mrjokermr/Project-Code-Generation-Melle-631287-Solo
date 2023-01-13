@@ -18,11 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Swagger2SpringBoot.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserServiceTests {
+public class UserTests {
 
     @LocalServerPort
     private int port;
@@ -42,7 +41,7 @@ public class UserServiceTests {
 //            • Something in the response is true or false
 //                We often work with the response body, or responsestatus.
 
-    TestRestTemplate template = new TestRestTemplate();
+    private TestRestTemplate template = new TestRestTemplate();
 
     private String createFullUrl(String uri) {
         return "http://localhost:" + port + uri;
