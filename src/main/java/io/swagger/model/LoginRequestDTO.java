@@ -27,6 +27,11 @@ public class LoginRequestDTO   {
     return this;
   }
 
+  public LoginRequestDTO(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
+
   /**
    * Get username
    * @return username

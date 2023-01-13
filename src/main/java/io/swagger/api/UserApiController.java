@@ -52,7 +52,9 @@ public class UserApiController implements UserApi {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserResponseDTO>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts) {
         //returns a users list mapped so that the response doens't include a hashed password
-        return ResponseEntity.status(HttpStatus.OK).body(UserMapper.UserListToUserResponseDTOList(userService.GetAllUsers(onlyWithoutBankAccounts)));
+        if(onlyWithoutBankAccounts != null ) return ResponseEntity.status(HttpStatus.OK).body(UserMapper.UserListToUserResponseDTOList(userService.GetAllUsers(onlyWithoutBankAccounts)));
+        else return ResponseEntity.status(HttpStatus.OK).body(UserMapper.UserListToUserResponseDTOList(userService.GetAllUsers(false)));
+
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
@@ -87,10 +89,16 @@ public class UserApiController implements UserApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<UserResponseDTO>> putUser(@Parameter(in = ParameterIn.DEFAULT, description = "updated info for this user", required=true, schema=@Schema()) @Valid @RequestBody UpdateUserRequestDTO body) {
-        User result = userService.UpdateUserInfoByBody(body);
+        if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(body.getTargetUserId())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else {
+            User result = userService.UpdateUserInfoByBody(body);
 
-        if (result != null) return ResponseEntity.status(HttpStatus.OK).body(List.of(UserMapper.UserToUserResponseDTO(result)));
-        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            if (result != null) return ResponseEntity.status(HttpStatus.OK).body(List.of(UserMapper.UserToUserResponseDTO(result)));
+            else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
     }
 
     //Needs to be kept public for everyone to access

@@ -68,6 +68,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public void SaveUser(User u) {
+        userRepository.save(u);
+    }
+
     public Integer GetCurrentAuthorizedUserId() {
         return GetCurrentUserByAuthorization().getId();
     }
@@ -160,10 +164,10 @@ public class UserService implements UserDetailsService {
             User targetUser = userRepository.findById(body.getTargetUserId()).get();
             if(targetUser == null) return null;
             else {
-                targetUser.setFirstName(body.getFirstName());
-                targetUser.setLastName(body.getLastName());
-                targetUser.setDayLimit(body.getDayLimit());
-                targetUser.setTransactionLimit(body.getTransactionLimit());
+                if(!body.getFirstName().isEmpty()) targetUser.setFirstName(body.getFirstName());
+                if(!body.getLastName().isEmpty()) targetUser.setLastName(body.getLastName());
+                if(body.getDayLimit() != null) targetUser.setDayLimit(body.getDayLimit());
+                if(body.getTransactionLimit() != null && body.getTransactionLimit() >= 0) targetUser.setTransactionLimit(body.getTransactionLimit());
 
                 userRepository.save(targetUser);
                 return targetUser;

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.Security.PasswordEncoderHolder;
 import io.swagger.model.UserAccountType;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;

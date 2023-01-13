@@ -82,8 +82,12 @@ public class BankaccountApiController implements BankaccountApi {
         else {
             BankAccount searchResult = bankAccountService.GetBankAccountByIban(IBAN);
 
-            if(searchResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            else return ResponseEntity.status(HttpStatus.OK).body(List.of(searchResult));
+            return ResponseEntity.status(HttpStatus.OK).body(List.of(searchResult));
+
+            //code hieronder niet doen want:
+            //Waarom zou je BAD_INPUT en NOT_FOUND anders behandelen? Als je een bad input geeft, dan geeft de database niets terug… dus not found.
+//            if(searchResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            else return ResponseEntity.status(HttpStatus.OK).body(List.of(searchResult));
         }
     }
 
@@ -92,17 +96,19 @@ public class BankaccountApiController implements BankaccountApi {
         //no preauthorized needed for crossplatform usage, no harm can be done with finding somebody's IBAN
         List<BankAccountIbanResponseDTO> results = bankAccountService.GetCurrentIbansByFullName(fullName);
 
-        if(results == null) {
-            //bad input
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
-        }
-        else if(results.size() == 0) {
-            //not found
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.OK).body(results);
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(results);
+
+//        if(results == null) {
+//            //bad input
+//            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+//        }
+//        else if(results.size() == 0) {
+//            //not found
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//        else {
+//            return ResponseEntity.status(HttpStatus.OK).body(results);
+//        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
@@ -112,8 +118,11 @@ public class BankaccountApiController implements BankaccountApi {
         }
         else {
             TotalBalanceResponseDTO result = bankAccountService.GetTotalBalanceByUserId(userId);
-            if(result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            else return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
+
+            return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
+
+//            if(result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            else return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
         }
 
     }
@@ -122,8 +131,9 @@ public class BankaccountApiController implements BankaccountApi {
     public ResponseEntity<List<BankAccount>> postBankAccount(@Parameter(in = ParameterIn.DEFAULT, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @Valid @RequestBody NewBankAccountRequestDTO body) {
         BankAccount result = bankAccountService.CreateBankAccountByRequestBody(body);
 
-        if(result == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        else return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
+        return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
+//        if(result == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        else return ResponseEntity.status(HttpStatus.OK).body(List.of(result));
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
@@ -137,14 +147,16 @@ public class BankaccountApiController implements BankaccountApi {
             if(updateResult == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
-            else if(updateResult.getIban() == body.getIban() && updateResult.getAbsoluteLimit() == body.getAbsoluteLimit()
-                    && updateResult.getAccountStatus().equals(body.getAccountStatus()) &&  updateResult.getAccountType().equals(body.getAccountType())) {
-                //all the info from the updated results matches the input info
-                return ResponseEntity.status(HttpStatus.OK).body(List.of(updateResult));
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.OK).body(List.of(updateResult));
-            }
+            else return ResponseEntity.status(HttpStatus.OK).body(List.of(updateResult));
+//            else if(updateResult.getIban() == body.getIban() && updateResult.getAbsoluteLimit() == body.getAbsoluteLimit()
+//                    && updateResult.getAccountStatus().equals(body.getAccountStatus()) &&  updateResult.getAccountType().equals(body.getAccountType())) {
+//                //all the info from the updated results matches the input info
+//                return ResponseEntity.status(HttpStatus.OK).body(List.of(updateResult));
+//            }
+//            else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//                //return ResponseEntity.status(HttpStatus.OK).body(List.of(updateResult));
+//            }
         }
 
 

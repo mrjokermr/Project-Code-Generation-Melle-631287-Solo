@@ -48,7 +48,7 @@ public interface BankaccountApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "401", description = "not allowed to perform this action") })
-    @RequestMapping(value = "/bankaccount/initBankAccounts/{userId}",
+    @RequestMapping(value = "/bankaccounts/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
     ResponseEntity<List<BankAccount>> bankaccountInitBankAccountsUserIdPost(@Parameter(in = ParameterIn.PATH, description = "user id for the targeted user", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
