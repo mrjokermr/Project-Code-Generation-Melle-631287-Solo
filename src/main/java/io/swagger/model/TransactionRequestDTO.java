@@ -22,14 +22,6 @@ public class TransactionRequestDTO {
     @JsonProperty("amount")
     private Double amount = null;
 
-    @JsonProperty("creationDate")
-    private Date creationDate = null;
-
-    public TransactionRequestDTO creationDate(Date creationDate) {
-        this.creationDate = creationDate;
-        return this;
-    }
-
     /**
      * Gets or Sets transactionType
      */

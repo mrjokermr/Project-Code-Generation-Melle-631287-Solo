@@ -48,7 +48,7 @@ public class TransactionService {
                     if(t.getCreationDate().after(fromDate)) filteredTransactionsList.add(t);
                 }
                 else if(toDate != null) {
-                    if(t.getCreationDate().after(toDate)) filteredTransactionsList.add(t);
+                    if(t.getCreationDate().before(toDate)) filteredTransactionsList.add(t);
                 }
             }
 
@@ -85,7 +85,7 @@ public class TransactionService {
 
         for(Transaction t : usersTransactions) {
             if(amountEquals != null) {
-                if(t.getAmount() == amountEquals) filteredTransactionsList.add(t);
+                if(t.getAmount().equals(amountEquals)) filteredTransactionsList.add(t);
             }
         }
 
@@ -163,6 +163,7 @@ public class TransactionService {
     public Transaction CreateANewTransaction(TransactionResponseDTO body) {
         SetReasonWhyTransactionFailed("");
 
+
         //first check is for bankaccount is active and is a current account
         if(IbanExistsAndIsValidForTransaction(body.getIbanTo(), body.getIbanFrom())) {
             //ibans are valid
@@ -172,29 +173,32 @@ public class TransactionService {
                 BankAccount toBa = bankAccountService.GetBankAccountByIban(body.getIbanTo());
 
                 Double amountToTransfer = body.getAmount();
-
-                if(BankAccountCanPerformThisTransaction(fromBa, amountToTransfer,false)) {
-                    //bank account is able to perform this transfer
-                    Transaction newTransaction = new Transaction();
-                    newTransaction.setTransactionType(Transaction.TransactionTypeEnum.REGULAR);
-                    newTransaction.setAmount(amountToTransfer);
-                    newTransaction.setCreationDate(new Date());
-                    newTransaction.setIbanFrom(fromBa.getIban());
-                    newTransaction.setIbanTo(toBa.getIban());
-                    newTransaction.setUserPerforming(body.getUserPerforming());
-
-                    //update the balances fro mthe bank accounts
-                    fromBa.setBalance(fromBa.getBalance() - amountToTransfer);
-                    toBa.setBalance(toBa.getBalance() + amountToTransfer);
-
-                    bankAccountService.SaveBankAccount(fromBa);
-                    bankAccountService.SaveBankAccount(toBa);
-
-                    transactionRepository.save(newTransaction);
-                    return newTransaction;
+                if(amountToTransfer <= 0) {
+                    SetReasonWhyTransactionFailed("Unvalid amount for transfer");
+                    return null;
                 }
+                else {
+                    if(BankAccountCanPerformThisTransaction(fromBa, amountToTransfer,false)) {
+                        //bank account is able to perform this transfer
+                        Transaction newTransaction = new Transaction();
+                        newTransaction.setTransactionType(Transaction.TransactionTypeEnum.REGULAR);
+                        newTransaction.setAmount(amountToTransfer);
+                        newTransaction.setCreationDate(new Date());
+                        newTransaction.setIbanFrom(fromBa.getIban());
+                        newTransaction.setIbanTo(toBa.getIban());
+                        newTransaction.setUserPerforming(body.getUserPerforming());
 
+                        //update the balances fro mthe bank accounts
+                        fromBa.setBalance(fromBa.getBalance() - amountToTransfer);
+                        toBa.setBalance(toBa.getBalance() + amountToTransfer);
 
+                        bankAccountService.SaveBankAccount(fromBa);
+                        bankAccountService.SaveBankAccount(toBa);
+
+                        transactionRepository.save(newTransaction);
+                        return newTransaction;
+                    }
+                }
             }
         }
 
@@ -298,21 +302,24 @@ public class TransactionService {
                 if(AmountOfTransactionsPerformedTodayByUserId(bankAccountOwner.getId()) <= bankAccountOwner.getDayLimit()) dayLimitCondition = true;
 
                 boolean transactionAmountLimitCondition = false;
-                if(amountToTransfer <= bankAccountOwner.getTransactionLimit()) transactionAmountLimitCondition = true;
-
-                boolean bankAccountBalanceCondition = false;
                 if(!isDepositTransaction) {
-                    if(bankAccount.getBalance() - amountToTransfer >= bankAccount.getAbsoluteLimit()) bankAccountBalanceCondition = true;
+                    if(amountToTransfer <= bankAccountOwner.getTransactionLimit()) transactionAmountLimitCondition = true;
                 }
-                else bankAccountBalanceCondition = true; //if it is a deposit transaction the balance condition is always true
+                else transactionAmountLimitCondition = true; //transaction should always be allowed because it is a deposit that does not have a transaction limit condition
+
+                boolean absoluteLimitCondition = false;
+                if(!isDepositTransaction) {
+                    if(bankAccount.getBalance() - amountToTransfer >= -Math.abs(bankAccount.getAbsoluteLimit())) absoluteLimitCondition = true;
+                }
+                else absoluteLimitCondition = true; //if it is a deposit transaction the balance condition is always true
 
                 //check if conditions are met and if so return true else return false
-                if(dayLimitCondition && transactionAmountLimitCondition && bankAccountBalanceCondition) return true;
+                if(dayLimitCondition && transactionAmountLimitCondition && absoluteLimitCondition) return true;
                 else {
                     String reason = "";
                     if(!dayLimitCondition) reason += "Daylimit surpassed. ";
                     if(!transactionAmountLimitCondition) reason += "Transactionlimit surpassed. ";
-                    if(!bankAccountBalanceCondition) reason += "Balance to low. ";
+                    if(!absoluteLimitCondition) reason += "Balance to low. ";
                     SetReasonWhyTransactionFailed(reason);
                     return false;
                 }

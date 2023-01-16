@@ -75,7 +75,7 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         employee.setLastName("Veldman");
         employee.setUserType(UserAccountType.ROLE_EMPLOYEE);
         employee.setEncryptedPassword("geheim");
-        userRepository.save(employee);
+        userRepository.save(employee); //id = 5
 
         List<BankAccount> resultOne = bankAccountService.CreateCurrentAndSavingsAccountForUserId(userRepository.findByUsername(employee.getUsername()).getId());
         for(BankAccount ba : resultOne) {
@@ -114,7 +114,7 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         customer2.setUserType(UserAccountType.ROLE_CUSTOMER);
         customer2.setEncryptedPassword("geheim");
 
-        userRepository.save(customer);
+        userRepository.save(customer); //ferdinant id = 6
         userRepository.save(customer2);
 
         List<BankAccount> resultTwo = bankAccountService.CreateCurrentAndSavingsAccountForUserId(userRepository.findByUsername(customer.getUsername()).getId());
@@ -133,20 +133,20 @@ public class Swagger2SpringBoot implements CommandLineRunner {
             }
         }
 
-        //create some fake transactions
-        TransactionResponseDTO dummyTrans1 = new TransactionResponseDTO("DCBA","ABCD",100.0,
-                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
-        TransactionResponseDTO dummyTrans2 = new TransactionResponseDTO("ABCD","DCBA",70.0,
-                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
-        TransactionResponseDTO dummyTrans3 = new TransactionResponseDTO("ABCD","ABCDEFG",230.0,
-                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
-        TransactionResponseDTO dummyTrans4 = new TransactionResponseDTO("GFEDCBA","DCBA",18.0,
-                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
-
-        transactionService.CreateANewTransaction(dummyTrans1);
-        transactionService.CreateANewTransaction(dummyTrans2);
-        transactionService.CreateANewTransaction(dummyTrans3);
-        transactionService.CreateANewTransaction(dummyTrans4);
+//        //create some fake transactions
+//        TransactionResponseDTO dummyTrans1 = new TransactionResponseDTO("DCBA","ABCD",100.0,
+//                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+//        TransactionResponseDTO dummyTrans2 = new TransactionResponseDTO("ABCD","DCBA",70.0,
+//                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+//        TransactionResponseDTO dummyTrans3 = new TransactionResponseDTO("ABCD","ABCDEFG",230.0,
+//                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+//        TransactionResponseDTO dummyTrans4 = new TransactionResponseDTO("GFEDCBA","DCBA",18.0,
+//                userRepository.findByUsername(customer.getUsername()).getId(), Transaction.TransactionTypeEnum.REGULAR);
+//
+//        transactionService.CreateANewTransaction(dummyTrans1);
+//        transactionService.CreateANewTransaction(dummyTrans2);
+//        transactionService.CreateANewTransaction(dummyTrans3);
+//        transactionService.CreateANewTransaction(dummyTrans4);
 
 
         //one user with duplicate name for testing purpose of the posibility that users have the same fullname
@@ -156,7 +156,9 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         CreateAndSaveAFakeUser("Sanne","Mets",UserAccountType.ROLE_CUSTOMER,true);
         CreateAndSaveAFakeUser("Yuri","van Gelder",UserAccountType.ROLE_CUSTOMER,false);
         CreateAndSaveAFakeUser("Joseph","Kralinger",UserAccountType.ROLE_CUSTOMER,true);
-        CreateAndSaveAFakeUser("Ronalda","Populiers",UserAccountType.ROLE_CUSTOMER,false);
+        CreateAndSaveAFakeUser("Ronalda","Populiers",UserAccountType.ROLE_CUSTOMER,true);
+
+        //bankAccountService.CreateCurrentAndSavingsAccountForUserId(userRepository.findByUsername("RonaldaPopuliers2022").getId());
 
         //init bank accounts for dummy users and employee and customer
     }
@@ -169,7 +171,7 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         else {
             dummyUser.setUsername(firstName + lastName + "2022");
         }
-        dummyUser.setTransactionLimit(30.0);
+        dummyUser.setTransactionLimit(2000.0);
         dummyUser.setCreationDate(new Date());
         dummyUser.setDayLimit(10);
         dummyUser.setFirstName(firstName);

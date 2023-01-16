@@ -75,6 +75,13 @@ public class BankaccountApiController implements BankaccountApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<BankAccount>> getAllBankAccountsSelf() {
+        List<BankAccount> allBankAccountsOwnedByAuthUser = bankAccountService.GetAllBankAccountsForUser(userService.GetCurrentAuthorizedUserId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(allBankAccountsOwnedByAuthUser);
+    }
+
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
     public ResponseEntity<List<BankAccount>> getBankAccountByIBAN(@Parameter(in = ParameterIn.PATH, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("IBAN") String IBAN) {
         if(userService.CustomerIsExecutingApiCallThatIsNotTargetedForHimself(IBAN)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);

@@ -60,10 +60,21 @@ public interface BankaccountApi {
         @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BankAccount.class)))),
         
         @ApiResponse(responseCode = "401", description = "not allowed to load information") })
-    @RequestMapping(value = "/bankaccounts",
+    @RequestMapping(value = "/bankaccounts/all",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<BankAccount>> getAllBankAccounts();
+
+    @Operation(summary = "get all bank accounts info of owned bankaccounts", description = "Get a list of bankaccount information of bankaccounts owned by authkey user", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "bankaccount" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "search results matching criteria", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BankAccount.class)))),
+
+            @ApiResponse(responseCode = "401", description = "not allowed to load information") })
+    @RequestMapping(value = "/bankaccounts",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<BankAccount>> getAllBankAccountsSelf();
 
 
     @Operation(summary = "get bank account info by IBAN", description = "Get Bank account information if you have the right rights ", security = {

@@ -252,7 +252,7 @@ public class BankAccountTests {
     public void customerNOTAllowedToGetAllBankAccounts() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForCustomer());
 
-        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccounts"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccounts/all"), HttpMethod.GET, entity, String.class);
 
         Assert.assertTrue(response.getStatusCode() == HttpStatus.UNAUTHORIZED || response.getStatusCode() == HttpStatus.FORBIDDEN);
     }
@@ -261,18 +261,42 @@ public class BankAccountTests {
     public void employeeAllowedToGetAllBankAccounts() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForEmployee());
 
-        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccounts"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccounts/all"), HttpMethod.GET, entity, String.class);
 
         Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
     }
 
+
     @Test
-    public void testname() throws IOException {
-        HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForCustomer());
+    public void employeeCantLoadBanksOwnAccount() throws IOException {
+        //4.	The bank has its own account NL01INHO0000000001
 
-        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccount"), HttpMethod.GET, entity, String.class);
+        HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForEmployee());
 
-        Assert.fail();
+        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccounts/all"), HttpMethod.GET, entity, String.class);
+
+        if(response.getStatusCode() == HttpStatus.OK) {
+
+            TypeReference<List<BankAccount>> typeRef = new TypeReference<List<BankAccount>>(){};
+            List<BankAccount> allBankAccounts = objectMapper.readValue(response.getBody(), typeRef);
+
+            for(BankAccount bankAccount : allBankAccounts) {
+                if(bankAccount.getIban().equals("NL01INHO0000000001")) Assert.fail();
+            }
+
+            Assert.assertTrue(response.getStatusCode() == HttpStatus.OK); //no bankaccount found with the bank owns Iban
+        }
+        else Assert.fail(); //employee should be able to load all bank accounts
+
     }
+
+//    @Test
+//    public void testname() throws IOException {
+//        HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForCustomer());
+//
+//        ResponseEntity<String> response = template.exchange(createFullUrl("/bankaccount"), HttpMethod.GET, entity, String.class);
+//
+//        Assert.fail();
+//    }
 
 }
