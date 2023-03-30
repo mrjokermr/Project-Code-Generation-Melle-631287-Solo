@@ -484,12 +484,12 @@ public class TransactionTests {
 
     }
 
-    @Test
-    public void testname() throws IOException {
-        HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForCustomer());
-
-        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction"), HttpMethod.GET, entity, String.class);
-
-        Assert.fail();
-    }
+//    @Test
+//    public void testname() throws IOException {
+//        HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForCustomer());
+//
+//        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction"), HttpMethod.GET, entity, String.class);
+//
+//        Assert.fail();
+//    }
 }

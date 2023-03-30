@@ -102,6 +102,7 @@ public class UserApiController implements UserApi {
     }
 
     //Needs to be kept public for everyone to access
+    @CrossOrigin
     public ResponseEntity<List<LoginResponseDTO>> userLogin(@Parameter(in = ParameterIn.DEFAULT, description = "required login info", required=true, schema=@Schema()) @Valid @RequestBody LoginRequestDTO body) {
 
         LoginResponseDTO responseDTO = userService.Login(body.getUsername(), body.getPassword());

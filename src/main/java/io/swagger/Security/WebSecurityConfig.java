@@ -44,9 +44,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable(); // no CSRF protection needed
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no sessions needed
-        http.authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).permitAll()
-                .anyRequest().authenticated(); // disallow any other URL for unauthenticated users
+//        http.authorizeRequests()
+//                .antMatchers(AUTH_WHITELIST).permitAll()
+//                .anyRequest().authenticated();
+        // disallow any other URL for unauthenticated users
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // add the filter
 
     }

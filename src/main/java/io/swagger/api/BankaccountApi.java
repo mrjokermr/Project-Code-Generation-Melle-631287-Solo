@@ -131,7 +131,7 @@ public interface BankaccountApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<BankAccount>> postBankAccount(@Parameter(in = ParameterIn.DEFAULT, description = "iban of which information has to be loaded", required=true, schema=@Schema()) @Valid @RequestBody NewBankAccountRequestDTO body);
+    ResponseEntity<List<BankAccount>> postBankAccount(@Parameter(in = ParameterIn.DEFAULT, description = "iban of which information has to be created", required=true, schema=@Schema()) @Valid @RequestBody NewBankAccountRequestDTO body);
 
 
     @Operation(summary = "update bank account info", description = "Put Bank account information if you have the right rights ", security = {
