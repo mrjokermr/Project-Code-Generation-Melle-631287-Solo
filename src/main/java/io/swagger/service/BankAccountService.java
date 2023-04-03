@@ -91,9 +91,11 @@ public class BankAccountService {
         List<BankAccountIbanResponseDTO> bankAccountsIbanResponse = new ArrayList<>();
 
         for(User u : usersMatchingFullName) {
-            bankAccountsIbanResponse.add(BankAccountMapper.BankAccountToBAIbanReponseDTO(
-                    bankAccountRepository.findByOwnerIdAndAccountType(u.getId(), BankAccountType.CURRENT),u
-            ));
+            BankAccount foundBankAccount = bankAccountRepository.findByOwnerIdAndAccountType(u.getId(), BankAccountType.CURRENT);
+            if(foundBankAccount != null) {
+                bankAccountsIbanResponse.add(BankAccountMapper.BankAccountToBAIbanReponseDTO(foundBankAccount,u));
+            }
+
         }
 
         return bankAccountsIbanResponse;

@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,7 +72,7 @@ public class TransactionApiController implements TransactionApi {
 
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
 
-    public ResponseEntity<List<TransactionResponseDTO>> getTransaction(@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals) {
+    public ResponseEntity<List<TransactionResponseDTO>> getTransaction(@Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, @Parameter(in = ParameterIn.QUERY, description = "set a date from which the transactions have to be loaded" ,schema=@Schema()) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be bigger than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountBiggerThan", required = false) Double amountBiggerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be smaller than given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountSmallerThan", required = false) Double amountSmallerThan, @Parameter(in = ParameterIn.QUERY, description = "the transaction amount has to be equal to the given value" ,schema=@Schema()) @Valid @RequestParam(value = "amountEquals", required = false) Double amountEquals, @Parameter(in = ParameterIn.QUERY, description = "Provide a iban to get transactions related with that iban",schema=@Schema()) @Valid @RequestParam(value = "historyWithIban", required = false) String historyWithIban) {
         //get transactions by logged in user
         Integer userId = userService.GetCurrentAuthorizedUserId();
         List<Transaction> allUserTransactions = null;
@@ -92,6 +93,11 @@ public class TransactionApiController implements TransactionApi {
             else {
                 //no filter is set so return all unfiltered transactions
                 allUserTransactions = transactionService.GetTransactionsById(userId);
+            }
+
+            //filter historyWithIban option, only keep transactions in the list that contain the historyWithIban at the fromIban or toIban
+            if(historyWithIban != null) {
+                allUserTransactions = transactionService.FilterListTransactionsRelatedToIbanOnly(allUserTransactions, historyWithIban);
             }
 
             //return the info

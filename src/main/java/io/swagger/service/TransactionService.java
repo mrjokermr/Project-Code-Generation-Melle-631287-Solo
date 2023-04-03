@@ -174,7 +174,7 @@ public class TransactionService {
 
                 Double amountToTransfer = body.getAmount();
                 if(amountToTransfer <= 0) {
-                    SetReasonWhyTransactionFailed("Unvalid amount for transfer");
+                    SetReasonWhyTransactionFailed("Invalid amount for transfer");
                     return null;
                 }
                 else {

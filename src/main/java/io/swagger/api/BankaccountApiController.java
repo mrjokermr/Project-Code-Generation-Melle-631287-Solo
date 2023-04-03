@@ -27,6 +27,8 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -99,9 +101,10 @@ public class BankaccountApiController implements BankaccountApi {
     }
 
 //    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
-    public ResponseEntity<List<BankAccountIbanResponseDTO>> getIbanByFullName(@Parameter(in = ParameterIn.PATH, description = "fullname from which the iban has to be loaded", required=true, schema=@Schema()) @PathVariable("fullName") String fullName) {
+    public ResponseEntity<List<BankAccountIbanResponseDTO>> getIbanByFullName(@Parameter(in = ParameterIn.PATH, description = "fullname from which the iban has to be loaded", required=true, schema=@Schema()) @PathVariable("fullName") String fullName) throws UnsupportedEncodingException {
         //no preauthorized needed for crossplatform usage, no harm can be done with finding somebody's IBAN
-        List<BankAccountIbanResponseDTO> results = bankAccountService.GetCurrentIbansByFullName(fullName);
+
+        List<BankAccountIbanResponseDTO> results = bankAccountService.GetCurrentIbansByFullName(URLDecoder.decode(fullName, "UTF-8"));
 
         return ResponseEntity.status(HttpStatus.OK).body(results);
 

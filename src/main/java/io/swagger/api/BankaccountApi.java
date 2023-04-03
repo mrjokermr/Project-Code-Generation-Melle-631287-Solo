@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +103,7 @@ public interface BankaccountApi {
     @RequestMapping(value = "/bankaccounts/{fullName}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<BankAccountIbanResponseDTO>> getIbanByFullName(@Parameter(in = ParameterIn.PATH, description = "fullname from which the iban has to be loaded", required=true, schema=@Schema()) @PathVariable("fullName") String fullName);
+    ResponseEntity<List<BankAccountIbanResponseDTO>> getIbanByFullName(@Parameter(in = ParameterIn.PATH, description = "fullname from which the iban has to be loaded", required=true, schema=@Schema()) @PathVariable("fullName") String fullName) throws UnsupportedEncodingException;
 
 
     @Operation(summary = "total balance from all bankaccounts", description = "", security = {
