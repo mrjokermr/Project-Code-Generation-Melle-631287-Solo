@@ -94,7 +94,7 @@ public interface UserApi {
     ResponseEntity<List<UserResponseDTO>> postUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserEmployeeRequestDTO body);
 
 
-    @Operation(summary = "update user info", description = "update user info by the info delivered in the requestbody", security = {
+    @Operation(summary = "update user info", description = "update user info by the info delivered in the requestbody, leave the values empty to keep the default value", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully updated the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),

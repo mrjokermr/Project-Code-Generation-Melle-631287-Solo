@@ -42,7 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable(); // no CSRF protection needed
+        //http.cors().disable().csrf().disable(); //tried to prevent cors also but didn't fix a 403 error that shouldn't happen
+        http.csrf().disable(); //no CSRF protection needed
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no sessions needed
 //        http.authorizeRequests()
 //                .antMatchers(AUTH_WHITELIST).permitAll()
