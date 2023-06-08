@@ -149,7 +149,7 @@ public class UserService implements UserDetailsService {
             return lrDTO;
 
         } catch (AuthenticationException e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username/password");
         }
 
     }

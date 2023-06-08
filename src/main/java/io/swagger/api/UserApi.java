@@ -26,23 +26,25 @@ import java.util.List;
 @Validated
 public interface UserApi {
 
-    @Operation(summary = "get all user info", description = "get all user info in a list", security = {
+    @Operation(summary = "Get all user info if you are an employee", description = "get all user info in an array", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully loaded users", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
-        @ApiResponse(responseCode = "401", description = "not allowed to load users") })
+        @ApiResponse(responseCode = "401", description = "only employees are allowed to load all user info") })
     @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserResponseDTO>> getAllUserInfo(@Parameter(in = ParameterIn.QUERY, description = "set true or false for desired result" ,schema=@Schema()) @Valid @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts);
+    ResponseEntity<List<UserResponseDTO>> getAllUserInfo(
+            @Parameter(in = ParameterIn.QUERY, description = "Set the parameter to true to obtain an array of users without bankaccounts" ,schema=@Schema()) @Valid
+            @RequestParam(value = "onlyWithoutBankAccounts", required = false) Boolean onlyWithoutBankAccounts);
 
-    @Operation(summary = "get all user info", description = "get your own user info", security = {
+    @Operation(summary = "get your own user info", description = "get your own user info", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "succesfully loaded user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "200", description = "succesfully loaded your own user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
 
             @ApiResponse(responseCode = "400", description = "bad input parameter"),
 
@@ -62,16 +64,16 @@ public interface UserApi {
     @RequestMapping(value = "/user/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserResponseDTO>> getUserInfoById(@Parameter(in = ParameterIn.PATH, description = "the user id of which information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
+    ResponseEntity<List<UserResponseDTO>> getUserInfoById(@Parameter(in = ParameterIn.PATH, description = "the user id of whom information has to be loaded", required=true, schema=@Schema()) @PathVariable("userId") Integer userId);
 
 
-    @Operation(summary = "register a new user as customer", description = "register yourself with credentials", tags={ "user" })
+    @Operation(summary = "register a new user as customer", description = "register a new customer banking user account to gain access to the banking application", tags={ "user" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "succesfully created a new user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+        @ApiResponse(responseCode = "200", description = "succesfully registered as a new user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
-        @ApiResponse(responseCode = "400", description = "bad input parameter"),
-        
-        @ApiResponse(responseCode = "401", description = "not allowed to register") })
+        @ApiResponse(responseCode = "400", description = "bad input parameter")
+    })
+
     @RequestMapping(value = "/user/register",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
@@ -79,7 +81,7 @@ public interface UserApi {
     ResponseEntity<List<UserResponseDTO>> postRegisterUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserRequestDTO body);
 
 
-    @Operation(summary = "register a new user performed by an employee", description = "more info can be put inside the requestbody", security = {
+    @Operation(summary = "register a new user performed by an employee", description = "this endpoint can only be used by an employee, and this employee can register a new user and also his/her userType", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully created a new user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
@@ -94,14 +96,14 @@ public interface UserApi {
     ResponseEntity<List<UserResponseDTO>> postUser(@Parameter(in = ParameterIn.DEFAULT, description = "new user body for registering the user", required=true, schema=@Schema()) @Valid @RequestBody NewUserEmployeeRequestDTO body);
 
 
-    @Operation(summary = "update user info", description = "update user info by the info delivered in the requestbody, leave the values empty to keep the default value", security = {
+    @Operation(summary = "update user info", description = "update user info by the info delivered in the requestbody, <b>*<u>leave a value empty to keep the default value</u></b>", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "user" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully updated the user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
-        @ApiResponse(responseCode = "401", description = "not allowed to create user") })
+        @ApiResponse(responseCode = "401", description = "not allowed to update this user info") })
     @RequestMapping(value = "/user",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
@@ -109,11 +111,11 @@ public interface UserApi {
     ResponseEntity<List<UserResponseDTO>> putUser(@Parameter(in = ParameterIn.DEFAULT, description = "updated info for this user", required=true, schema=@Schema()) @Valid @RequestBody UpdateUserRequestDTO body);
 
 
-    @Operation(summary = "login to obtain an auth token", description = "login to obtain an auth token", tags={ "user" })
+    @Operation(summary = "Endpoint for recieving a JWT token", description = "Send the correct credentials within the requestbody to recieve a JWT token ", tags={ "user" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "succesfully logged in", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = LoginResponseDTO.class)))),
         
-        @ApiResponse(responseCode = "400", description = "bad input parameter"),
+        @ApiResponse(responseCode = "400", description = "Incorrect credentials"),
         
         @ApiResponse(responseCode = "401", description = "not allowed") })
     @RequestMapping(value = "/user/login",
