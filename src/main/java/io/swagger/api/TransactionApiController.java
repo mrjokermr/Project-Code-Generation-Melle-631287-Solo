@@ -102,7 +102,7 @@ public class TransactionApiController implements TransactionApi {
 
             //return the info
             if(allUserTransactions == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            else if(allUserTransactions.size() == 0) return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            else if(allUserTransactions.size() == 0) return ResponseEntity.status(HttpStatus.OK)
                     .body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));
             else {
                 return ResponseEntity.status(HttpStatus.OK).body(TransactionMapper.TransactionsToTransactionsResponseList(allUserTransactions));

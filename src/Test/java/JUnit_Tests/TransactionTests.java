@@ -404,10 +404,10 @@ public class TransactionTests {
         //has performed 10 transactions and this should run from all the tests otherwise the transaction has not been performed
         HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForRandomUser());
 
-        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction?toDate=2000/1/1"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction?toDate=2000-01-01"), HttpMethod.GET, entity, String.class);
 
 
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.NO_CONTENT);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
     }
 
     @Test
@@ -415,7 +415,7 @@ public class TransactionTests {
         //has performed 10 transactions and this should run from all the tests otherwise the transaction has not been performed
         HttpEntity<String> entity = new HttpEntity<>(null, GetHttpheaderWithBearerTokenForRandomUser());
 
-        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction?fromDate=2000/1/1"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = template.exchange(createFullUrl("/transaction?fromDate=2000-01-01"), HttpMethod.GET, entity, String.class);
 
 
         Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
@@ -453,7 +453,7 @@ public class TransactionTests {
         ResponseEntity<String> response = template.exchange(createFullUrl("/transaction?amountSmallerThan=0.99"), HttpMethod.GET, entity, String.class);
 
 
-        Assert.assertTrue(response.getStatusCode() == HttpStatus.NO_CONTENT);
+        Assert.assertTrue(response.getStatusCode() == HttpStatus.OK);
     }
 
     @Test
